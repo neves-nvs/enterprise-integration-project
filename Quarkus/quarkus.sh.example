@@ -1,0 +1,14 @@
+#!/bin/bash
+echo "Starting..."
+
+sudo yum install -y docker
+
+sudo service docker start
+
+sudo docker login -u "$GIT_USERNAME" -p "$GIT_PASSWORD"
+
+sudo docker pull "$GIT_USERNAME"/scenario1:1.0.0-SNAPSHOT
+
+sudo docker run -d --name scenario1 -p 8080:8080 "$GITUSERNAME"/scenario1:1.0.0-SNAPSHOT
+
+echo "Finished."
