@@ -21,7 +21,7 @@ cd Kafka || exit
 terraform init
 terraform apply -auto-approve
 esc=$'\e'
-addresskafka="$(terraform state show 'aws_instance.exampleKafkaConfiguration[0]' | grep public_dns | sed "s/public_dns//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
+addresskafka="$(terraform state show 'aws_instance.KafkaConfiguration[0]' | grep public_dns | sed "s/public_dns//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
 cd ..
 
 # # #Terraform - Quarkus Micro services changing the configuration of the DB connection, recompiling and packaging

@@ -10,20 +10,20 @@ terraform {
 }
 
 provider "aws" {
-  region      = "us-east-1"
-  }
+  region = "us-east-1"
+}
 
-resource "aws_instance" "exampleKafkaConfiguration" {
-  ami                     = "ami-0cf10cdf9fcd62d37"
-  instance_type           = "t2.small"
-  count                   = 1
-  vpc_security_group_ids  = [aws_security_group.instance.id]
-  key_name                = "vockey"
+resource "aws_instance" "KafkaConfiguration" {
+  ami                    = "ami-0cf10cdf9fcd62d37"
+  instance_type          = "t2.small"
+  count                  = 1
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  key_name               = "vockey"
 
-  user_data = "${file("creation.sh")}"
+  user_data = file("creation.sh")
 
   user_data_replace_on_change = true
-  
+
   tags = {
     Name = "terraform-kafka"
   }
@@ -37,13 +37,13 @@ resource "aws_security_group" "instance" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-    ingress {
+  ingress {
     from_port   = 2181
     to_port     = 2181
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-    ingress {
+  ingress {
     from_port   = 9092
     to_port     = 9092
     protocol    = "tcp"
