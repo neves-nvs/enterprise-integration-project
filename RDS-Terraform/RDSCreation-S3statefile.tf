@@ -32,7 +32,7 @@ variable "db_name" {
   default     = "quarkus_test_all_operations"
 }
 
-resource "aws_db_instance" "rds_instance" {
+resource "aws_db_instance" "rds" {
   identifier             = "terraform-rds-instance"
   engine                 = "mysql"
   allocated_storage      = 20
@@ -46,12 +46,12 @@ resource "aws_db_instance" "rds_instance" {
 }
 
 output "address" {
-  value       = aws_db_instance.example.address
+  value       = aws_db_instance.rds.address
   description = "Connect to the database at this endpoint"
 }
 
 output "port" {
-  value       = aws_db_instance.example.port
+  value       = aws_db_instance.rds.port
   description = "The port the database is listening on"
 }
 
