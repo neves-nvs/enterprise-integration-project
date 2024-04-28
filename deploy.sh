@@ -25,7 +25,7 @@ addresskafka="$(terraform state show 'aws_instance.exampleKafkaConfiguration[0]'
 cd ..
 
 # # #Terraform - Quarkus Micro services changing the configuration of the DB connection, recompiling and packaging
-cd microservices/Purchase/src/main/resources || exit
+cd microservices/purchase/src/main/resources || exit
 
 sed -i '' "s/kafka.bootstrap.servers/#kafka.bootstrap.servers/g" application.properties
 echo "" >>application.properties
