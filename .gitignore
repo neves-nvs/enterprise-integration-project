@@ -1,11 +1,5 @@
 # TODO Handle these files better
-.quarkus.sh
 *.pem
-BPMN/
-Camunda-Terraform/
-KongaTerraform
-KongTerraform/
-DeploymentAutomation*
 
 # General
 .DS_Store
