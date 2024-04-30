@@ -30,72 +30,68 @@ public class SelledProductResource {
 
 	private void initdb() {
 		// In a production environment this configuration SHOULD NOT be used
-		client.query("DROP TABLE IF EXISTS Coupons").execute()
-				// .flatMap(r -> client.query(
-				// "CREATE TABLE Customers (id SERIAL PRIMARY KEY, name TEXT NOT NULL,
-				// FiscalNumber BIGINT UNSIGNED, location TEXT NOT NULL)")
-				// .execute())
-				// .flatMap(r -> client.query(
-				// "INSERT INTO Customers (name,FiscalNumber,location) VALUES
-				// ('client1','123456','Lisbon')")
-				// .execute())
-				// .flatMap(r -> client.query(
-				// "INSERT INTO Customers (name,FiscalNumber,location) VALUES
-				// ('client2','987654','Setúbal')")
-				// .execute())
-				// .flatMap(r -> client.query(
-				// "INSERT INTO Customers (name,FiscalNumber,location) VALUES
-				// ('client3','123987','OPorto')")
-				// .execute())
-				// .flatMap(r -> client
-				// .query("INSERT INTO Customers (name,FiscalNumber,location) VALUES
-				// ('client4','987123','Faro')")
-				// .execute())
+		client.query("DROP TABLE IF EXISTS SelledProducts")
+				.execute()
+				.flatMap(r -> client.query("CREATE TABLE SelledProducts ("
+						+ "id SERIAL PRIMARY KEY, "
+						+ "PurchaseId BIGINT UNSIGNED NOT NULL, " // Composition
+						// Inheritance + "DiscountCouponID BIGINT UNSIGNED, " // byCoupon
+						+ "DiscountCouponID BIGINT UNSIGNED, "
+						+ "CustomerID BIGINT UNSIGNED, " // byCustomer
+						+ "Location TEXT, " // byLocation
+						+ "LoyaltyCardID BIGINT UNSIGNED," // byLoyaltyCard
+						+ "ShopID BIGINT UNSIGNED)" // byShop
+				).execute())
+				.flatMap(r -> client.query(
+						"INSERT INTO SelledProducts (PurchaseId,DiscountCouponID,CustomerID,Location,LoyaltyCardID,ShopID) VALUES (1,1,1,'Lisbon',1,1)")
+						.execute())
+				.flatMap(r -> client.query(
+						"INSERT INTO SelledProducts (PurchaseId,DiscountCouponID,CustomerID,Location,LoyaltyCardID,ShopID) VALUES (2,2,2,'Setúbal',2,2)")
+						.execute())
 				.await().indefinitely();
 	}
 
-	// @GET
-	// public Multi<Customer> get() {
-	// return Coupon.findAll(client);
-	// }
+	@GET
+	public Multi<SelledProduct> get() {
+		return SelledProduct.findAll(client);
+	}
 
-	// @GET
-	// @Path("{id}")
-	// public Uni<Response> getSingle(Long id) {
-	// return Coupon.findById(client, id)
-	// .onItem()
-	// .transform(customer -> customer != null ? Response.ok(customer)
-	// : Response.status(Response.Status.NOT_FOUND))
-	// .onItem().transform(ResponseBuilder::build);
-	// }
+	@GET
+	@Path("{id}")
+	public Uni<Response> getSingle(Long id) {
+		return SelledProduct.findById(client, id)
+				.onItem()
+				.transform(selledProduct -> selledProduct != null ? Response.ok(selledProduct)
+						: Response.status(Response.Status.NOT_FOUND))
+				.onItem().transform(ResponseBuilder::build);
+	}
 
-	// @POST
-	// public Uni<Response> create(Coupon coupon) {
-	// return coupon.save(client, customer.name, customer.FiscalNumber,
-	// customer.location)
-	// .onItem().transform(id -> URI.create("/customer/" + id))
-	// .onItem().transform(uri -> Response.created(uri).build());
-	// }
+	@POST
+	public Uni<Response> create(SelledProduct selledProduct) {
+		return SelledProduct
+				.save(client, selledProduct.idPurchase, selledProduct.idCoupon, selledProduct.idCustomer,
+						selledProduct.location,
+						selledProduct.idLoyaltycard, selledProduct.idShop)
+				.onItem().transform(id -> URI.create("/SelledProduct/" + id))
+				.onItem().transform(uri -> Response.created(uri).build());
+	}
 
-	// @DELETE
-	// @Path("{id}")
-	// public Uni<Response> delete(Long id) {
-	// return Customer.delete(client, id)
-	// .onItem()
-	// .transform(deleted -> deleted ? Response.Status.NO_CONTENT :
-	// Response.Status.NOT_FOUND)
-	// .onItem().transform(status -> Response.status(status).build());
-	// }
+	@DELETE
+	@Path("{id}")
+	public Uni<Response> delete(Long id) {
+		return SelledProduct.delete(client, id)
+				.onItem()
+				.transform(deleted -> deleted ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
+				.onItem().transform(status -> Response.status(status).build());
+	}
 
-	// @PUT
-	// @Path("/{id}/{name}/{FiscalNumber}/{location}")
-	// public Uni<Response> update(Long id, String name, Long FiscalNumber, String
-	// location) {
-	// return Coupon.update(client, id, name, FiscalNumber, location)
-	// .onItem()
-	// .transform(updated -> updated ? Response.Status.NO_CONTENT :
-	// Response.Status.NOT_FOUND)
-	// .onItem().transform(status -> Response.status(status).build());
-	// }
+	@PUT
+	@Path("/{id}/{idPurchase}/{idCoupon}/{idCustomer}/{location}/{idLoyaltycard}/{idShop}")
+	public Uni<Response> update(Long id, Long idPurchase, Long idCustomer, String location, Long idLoyaltycard,
+			Long idShop) {
+		return SelledProduct.update(client, id, idPurchase, idCustomer, idShop, idLoyaltycard, location, null, location)
+				.onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
+				.onItem().transform(status -> Response.status(status).build());
+	}
 
 }
