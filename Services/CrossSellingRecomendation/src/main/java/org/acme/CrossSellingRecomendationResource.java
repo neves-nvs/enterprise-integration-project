@@ -11,8 +11,14 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import java.net.URI;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 
+@Path("CrossSellingRecommendation")
 public class CrossSellingRecomendationResource {
+
+	@Channel("CrossSellingRecomendation")
+	Emitter<CrossSellingRecommendation> emitter;
 
 	@Inject
 	io.vertx.mutiny.mysqlclient.MySQLPool client;
@@ -36,7 +42,7 @@ public class CrossSellingRecomendationResource {
 						"CREATE TABLE CrossSellingRecommendations (id SERIAL PRIMARY KEY, LoyaltyCardId BIGINT UNSIGNED)")
 						.execute())
 				.flatMap(r -> client.query(
-						"INSERT INTO CrossSellingRecommendations (LoyaltyCardId) VALUES(1)")
+						"INSERT INTO CrossSellingRecommendations (LoyaltyCardId) VALUES (1)")
 						.execute())
 				.await()
 				.indefinitely();
@@ -58,9 +64,11 @@ public class CrossSellingRecomendationResource {
 	}
 
 	@POST
+	@Produces(MediaType.APPLICATION_JSON)
 	public Uni<Response> create(CrossSellingRecommendation discountCoupon) {
 		return discountCoupon
 				.save(client, discountCoupon.idLoyaltyCard)
+				.onItem().invoke(() -> emitter.send(discountCoupon))
 				.onItem().transform(id -> URI.create("/discountCoupon/" + id))
 				.onItem().transform(uri -> Response.created(uri).build());
 	}

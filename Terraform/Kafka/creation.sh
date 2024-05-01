@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd || exit
+cd
 sudo wget https://dlcdn.apache.org/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4-bin.tar.gz
 sudo tar -zxf apache-zookeeper-3.8.4-bin.tar.gz
 sudo mv apache-zookeeper-3.8.4-bin /usr/local/zookeeper

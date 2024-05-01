@@ -11,8 +11,14 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import java.net.URI;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 
+@Path("DiscountCoupon")
 public class DiscountCouponResource {
+
+	@Channel("DiscountCoupon")
+	Emitter<DiscountCoupon> emitter;
 
 	@Inject
 	io.vertx.mutiny.mysqlclient.MySQLPool client;
@@ -61,6 +67,7 @@ public class DiscountCouponResource {
 	public Uni<Response> create(DiscountCoupon discountCoupon) {
 		return discountCoupon
 				.save(client, discountCoupon.idLoyaltyCard, discountCoupon.discountType, discountCoupon.expiryDate)
+				.onItem().invoke(() -> emitter.send(discountCoupon))
 				.onItem().transform(id -> URI.create("/discountCoupon/" + id))
 				.onItem().transform(uri -> Response.created(uri).build());
 	}
