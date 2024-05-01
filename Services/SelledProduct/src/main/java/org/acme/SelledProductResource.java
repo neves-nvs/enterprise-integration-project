@@ -11,6 +11,8 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 @Path("SelledProduct")
 public class SelledProductResource {
@@ -21,6 +23,9 @@ public class SelledProductResource {
 	@Inject
 	@ConfigProperty(name = "myapp.schema.create", defaultValue = "true")
 	boolean schemaCreate;
+
+	@ConfigProperty(name = "kafka.bootstrap.servers")
+	String kafkaServers;
 
 	void config(@Observes StartupEvent ev) {
 		if (schemaCreate) {
@@ -36,17 +41,17 @@ public class SelledProductResource {
 						+ "id SERIAL PRIMARY KEY, "
 						+ "PurchaseId BIGINT UNSIGNED NOT NULL, " // Composition
 						// Inheritance + "DiscountCouponID BIGINT UNSIGNED, " // byCoupon
-						+ "DiscountCouponID BIGINT UNSIGNED, "
-						+ "CustomerID BIGINT UNSIGNED, " // byCustomer
+						+ "DiscountCouponId BIGINT UNSIGNED, "
+						+ "CustomerId BIGINT UNSIGNED, " // byCustomer
 						+ "Location TEXT, " // byLocation
-						+ "LoyaltyCardID BIGINT UNSIGNED," // byLoyaltyCard
-						+ "ShopID BIGINT UNSIGNED)" // byShop
+						+ "LoyaltyCardId BIGINT UNSIGNED," // byLoyaltyCard
+						+ "ShopId BIGINT UNSIGNED)" // byShop
 				).execute())
 				.flatMap(r -> client.query(
-						"INSERT INTO SelledProducts (PurchaseId,DiscountCouponID,CustomerID,Location,LoyaltyCardID,ShopID) VALUES (1,1,1,'Lisbon',1,1)")
+						"INSERT INTO SelledProducts (PurchaseId,DiscountCouponId,CustomerId,Location,LoyaltyCardId,ShopId) VALUES (1,1,1,'Lisbon',1,1)")
 						.execute())
 				.flatMap(r -> client.query(
-						"INSERT INTO SelledProducts (PurchaseId,DiscountCouponID,CustomerID,Location,LoyaltyCardID,ShopID) VALUES (2,2,2,'Setúbal',2,2)")
+						"INSERT INTO SelledProducts (PurchaseId,DiscountCouponId,CustomerId,Location,LoyaltyCardId,ShopId) VALUES (2,2,2,'Setúbal',2,2)")
 						.execute())
 				.await().indefinitely();
 	}
@@ -68,10 +73,14 @@ public class SelledProductResource {
 
 	@POST
 	public Uni<Response> create(SelledProduct selledProduct) {
+		System.out.println("SelledProductResource.create() - selledProduct: " + selledProduct);
 		return SelledProduct
-				.save(client, selledProduct.idPurchase, selledProduct.idCoupon, selledProduct.idCustomer,
-						selledProduct.location,
-						selledProduct.idLoyaltycard, selledProduct.idShop)
+				.save(client, selledProduct.idPurchase, selledProduct.idDiscountCoupon, selledProduct.idCustomer,
+						selledProduct.location, selledProduct.idLoyaltyCard, selledProduct.idShop)
+				.onItem().invoke(() -> {
+					DynamicKafkaProducer producer = new DynamicKafkaProducer(kafkaServers);
+					producer.run(selledProduct);
+				})
 				.onItem().transform(id -> URI.create("/SelledProduct/" + id))
 				.onItem().transform(uri -> Response.created(uri).build());
 	}
@@ -86,10 +95,11 @@ public class SelledProductResource {
 	}
 
 	@PUT
-	@Path("/{id}/{idPurchase}/{idCoupon}/{idCustomer}/{location}/{idLoyaltycard}/{idShop}")
-	public Uni<Response> update(Long id, Long idPurchase, Long idCustomer, String location, Long idLoyaltycard,
-			Long idShop) {
-		return SelledProduct.update(client, id, idPurchase, idCustomer, idShop, idLoyaltycard, location, null, location)
+	@Path("/{id}/{idPurchase}/{idDiscountCoupon}/{idCustomer}/{location}/{idLoyaltyCard}/{idShop}")
+	public Uni<Response> update(Long id, Long idPurchase, Long idDiscountCoupon, Long idCustomer, String location,
+			Long idLoyaltyCard, Long idShop) {
+		return SelledProduct
+				.update(client, id, idPurchase, idDiscountCoupon, idCustomer, location, idLoyaltyCard, idShop)
 				.onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
 				.onItem().transform(status -> Response.status(status).build());
 	}
