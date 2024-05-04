@@ -13,22 +13,32 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "konga" {
-  ami                    = "ami-0b5eea76982371e91"
-  instance_type          = "t2.small"
+resource "aws_instance" "crosssellingrecommendation" {
+  # ARM
+  ami           = "ami-0cd7323ab3e63805f"
+  instance_type = "c6g.medium"
+
+  #  x86
+  #  ami                     = "ami-0d7a109bf30624c99"
+  #  instance_type           = "t2.micro"
+
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
 
-  user_data = file("deploy.sh")
-
+  user_data                   = file("quarkus.sh")
   user_data_replace_on_change = true
 
+  # TODO
+  #   user_data = templatefile("${path.module}/user_data.tpl", {
+  #   instance_ip = aws_instance.instance_a.private_ip
+  # })
+
   tags = {
-    Name = "terraform-example-Konga"
+    Name = "terraform-deploy-QuarkusProject-Customer"
   }
 }
 
-resource "aws_security_group" "instance" {
+resource "aws_security_group" "crosssellingrecommendation" {
   name = var.security_group_name
   ingress {
     from_port        = 0
@@ -49,10 +59,5 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-konga-instance5"
-}
-
-output "address" {
-  value       = aws_instance.konga.public_dns
-  description = "Connect to the KONGA at this endpoint"
+  default     = "terraform-quarkus-crosssellingrecommendation"
 }

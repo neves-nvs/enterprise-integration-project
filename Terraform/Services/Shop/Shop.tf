@@ -13,18 +13,23 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "konga" {
-  ami                    = "ami-0b5eea76982371e91"
-  instance_type          = "t2.small"
+resource "aws_instance" "shop" {
+  # ARM
+  ami           = "ami-0cd7323ab3e63805f" #arm
+  instance_type = "c6g.medium"
+
+  # alternative instance_type for Amazon Linux x86 built by Amazon Web Services
+  #  ami                     = "ami-0d7a109bf30624c99"
+  #  instance_type           = "t2.micro"
+
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
 
-  user_data = file("deploy.sh")
-
+  user_data                   = file("quarkus.sh")
   user_data_replace_on_change = true
 
   tags = {
-    Name = "terraform-example-Konga"
+    Name = "terraform-instance-quarkus-shop"
   }
 }
 
@@ -49,10 +54,6 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-konga-instance5"
+  default     = "terraform-quarkus-shop"
 }
 
-output "address" {
-  value       = aws_instance.konga.public_dns
-  description = "Connect to the KONGA at this endpoint"
-}

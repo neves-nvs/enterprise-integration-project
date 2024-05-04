@@ -10,20 +10,20 @@ terraform {
 }
 
 provider "aws" {
-  region      = "us-east-1"
+  region = "us-east-1"
 
 }
 
-resource "aws_instance" "exampleInstallKong" {
-  ami                     = "ami-0b5eea76982371e91"
-  instance_type           = "t2.small"
-  vpc_security_group_ids  = [aws_security_group.instance.id]
-  key_name                = "vockey"
+resource "aws_instance" "kong" {
+  ami                    = "ami-0b5eea76982371e91"
+  instance_type          = "t2.small"
+  vpc_security_group_ids = [aws_security_group.instance.id]
+  key_name               = "vockey"
 
-  user_data = "${file("deploy.sh")}"
+  user_data = file("deploy.sh")
 
   user_data_replace_on_change = true
-  
+
   tags = {
     Name = "terraform-example-Kong"
   }
@@ -32,10 +32,10 @@ resource "aws_instance" "exampleInstallKong" {
 resource "aws_security_group" "instance" {
   name = var.security_group_name
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
   egress {
@@ -54,7 +54,7 @@ variable "security_group_name" {
 }
 
 output "address" {
-  value       = aws_instance.exampleInstallKong.public_dns
+  value       = aws_instance.kong.public_dns
   description = "Connect to the KONG at this endpoint"
 }
 

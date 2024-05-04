@@ -39,7 +39,7 @@ public class CrossSellingRecomendationResource {
 				.query("DROP TABLE IF EXISTS CrossSellingRecommendations")
 				.execute()
 				.flatMap(r -> client.query(
-						"CREATE TABLE CrossSellingRecommendations (id SERIAL PRIMARY KEY, LoyaltyCardId BIGINT UNSIGNED)")
+						"CREATE TABLE CrossSellingRecommendations (id SERIAL PRIMARY KEY, LoyaltyCardId BIGINT UNSIGNED NOT NULL)")
 						.execute())
 				.flatMap(r -> client.query(
 						"INSERT INTO CrossSellingRecommendations (LoyaltyCardId) VALUES (1)")

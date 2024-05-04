@@ -2,47 +2,56 @@
 
 source ./access.sh
 
-# #Terraform - Quarkus purchase
-cd Quarkus-Terraform/Purchase || exit
-terraform destroy -auto-approve
-cd ../..
+cd Terraform || exit
 
-# #Terraform - Quarkus customer
-cd Quarkus-Terraform/customer || exit
-terraform destroy -auto-approve
-cd ../..
+# Top Level Infra
+# (
+#     cd Camunda || exit
+#     terraform destroy -auto-approve
+# )
 
-# #Terraform - Quarkus shop
-cd Quarkus-Terraform/shop
-terraform destroy -auto-approve
-cd ../..
+# (
+#     cd KongTerraform || exit
+#     terraform destroy -auto-approve
+#     cd ..
+# )
 
-# #Terraform - Quarkus loyaltycard
-cd Quarkus-Terraform/loyaltycard
-terraform destroy -auto-approve
-cd ../..
+# (
+#     cd KongaTerraform || exit
+#     terraform destroy -auto-approve
+# )
 
-# #Terraform - RDS
-cd RDS-Terraform
-terraform destroy -auto-approve
-cd ..
+# Microservices
 
-# #Terraform - Camunda
-cd Camunda-Terraform
-terraform destroy -auto-approve
-cd ..
+(
+    cd Services/Purchase || exit
+    terraform destroy -auto-approve
+)
 
-# # #Terraform - Kafka
-cd Kafka
-terraform destroy -auto-approve
-cd ..
+(
+    cd Services/Customer || exit
+    terraform destroy -auto-approve
+)
 
-# # #Terraform - Kong
-cd KongTerraform
-terraform destroy -auto-approve
-cd ..
+(
+    cd Services/Shop || exit
+    terraform destroy -auto-approve
+)
 
-# # #Terraform - Konga
-cd KongaTerraform
-terraform destroy -auto-approve
-cd ..
+(
+    cd Services/LoyaltyCard || exit
+    terraform destroy -auto-approve
+    cd ../..
+)
+
+# Data
+
+(
+    cd RDS-Terraform || exit
+    terraform destroy -auto-approve
+)
+
+(
+    cd Kafka || exit
+    terraform destroy -auto-approve
+)
