@@ -1,8 +1,13 @@
 #!/bin/bash
 
+cd "$(dirname "$0")" || exit
+
+# Now you can safely run commands that rely on relative paths
+echo "Running in directory: $(pwd)"
+
 source ./access.sh
 
-cd Terraform || exit
+cd ../Terraform || exit
 
 # Top Level Infra
 # (

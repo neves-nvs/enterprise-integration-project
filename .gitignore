@@ -1,6 +1,9 @@
 # TODO Handle these files better
 *.pem
 
+# Quarkus
+.quarkus
+
 # General
 .DS_Store
 .AppleDouble

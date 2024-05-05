@@ -13,6 +13,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "security_group_name" {
+  description = "The name of the security group"
+  type        = string
+  default     = "terraform-quarkus-shop"
+}
+
 variable "rds_dns" {
   description = "The DNS of the RDS instance"
   type        = string
@@ -28,18 +34,12 @@ variable "kafka_broker_url" {
   type        = string
 }
 
-variable "security_group_name" {
-  description = "The name of the security group"
-  type        = string
-  default     = "terraform-quarkus-loualtycard"
-}
-
-resource "aws_instance" "loyaltycard" {
+resource "aws_instance" "discountcoupon" {
   # ARM
-  ami           = "ami-0cd7323ab3e63805f"
+  ami           = "ami-0cd7323ab3e63805f" #arm
   instance_type = "c6g.medium"
 
-  #  x86
+  # alternative instance_type for Amazon Linux x86 built by Amazon Web Services
   #  ami                     = "ami-0d7a109bf30624c99"
   #  instance_type           = "t2.micro"
 
@@ -54,7 +54,7 @@ resource "aws_instance" "loyaltycard" {
   user_data_replace_on_change = true
 
   tags = {
-    Name = "terraform-instance-quarkus-loyaltycard"
+    Name = "terraform-instance-discountcoupon"
   }
 }
 
@@ -76,6 +76,7 @@ resource "aws_security_group" "instance" {
   }
 }
 
-output "loyaltycard_dns" {
-  value = aws_instance.loyaltycard.public_dns
+output "discountcoupon_dns" {
+  value = aws_instance.discountcoupon.public_dns
 }
+

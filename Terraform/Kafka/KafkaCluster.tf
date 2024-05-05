@@ -13,7 +13,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_instance" "KafkaConfiguration" {
+resource "aws_instance" "kafka_broker" {
   ami                    = "ami-0cf10cdf9fcd62d37"
   instance_type          = "t2.small"
   count                  = 1
@@ -61,6 +61,6 @@ resource "aws_security_group" "instance" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-example-instance5"
+  default     = "terraform-kafka-broker"
 }
 

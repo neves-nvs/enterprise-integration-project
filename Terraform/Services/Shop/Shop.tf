@@ -13,6 +13,27 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "security_group_name" {
+  description = "The name of the security group"
+  type        = string
+  default     = "terraform-quarkus-shop"
+}
+
+variable "rds_dns" {
+  description = "The DNS of the RDS instance"
+  type        = string
+}
+
+variable "dockerhub_user" {
+  description = "The username of the DockerHub account"
+  type        = string
+}
+
+variable "kafka_broker_url" {
+  description = "The URL of the Kafka broker"
+  type        = string
+}
+
 resource "aws_instance" "shop" {
   # ARM
   ami           = "ami-0cd7323ab3e63805f" #arm
@@ -25,7 +46,11 @@ resource "aws_instance" "shop" {
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
 
-  user_data                   = file("quarkus.sh")
+  user_data = templatefile("${path.module}/quarkus.sh", {
+    rds_dns          = var.rds_dns
+    dockerhub_user   = var.dockerhub_user
+    kafka_broker_url = var.kafka_broker_url
+  })
   user_data_replace_on_change = true
 
   tags = {
@@ -51,9 +76,7 @@ resource "aws_security_group" "instance" {
   }
 }
 
-variable "security_group_name" {
-  description = "The name of the security group"
-  type        = string
-  default     = "terraform-quarkus-shop"
+output "shop_dns" {
+  value = aws_instance.shop.public_dns
 }
 

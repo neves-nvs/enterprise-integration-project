@@ -31,10 +31,10 @@ variable "kafka_broker_url" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-quarkus-loualtycard"
+  default     = "terraform-quarkus-selledproduct"
 }
 
-resource "aws_instance" "loyaltycard" {
+resource "aws_instance" "selledproduct" {
   # ARM
   ami           = "ami-0cd7323ab3e63805f"
   instance_type = "c6g.medium"
@@ -54,7 +54,7 @@ resource "aws_instance" "loyaltycard" {
   user_data_replace_on_change = true
 
   tags = {
-    Name = "terraform-instance-quarkus-loyaltycard"
+    Name = "terraform-instance-quarkus-selledproduct"
   }
 }
 
@@ -76,6 +76,6 @@ resource "aws_security_group" "instance" {
   }
 }
 
-output "loyaltycard_dns" {
-  value = aws_instance.loyaltycard.public_dns
+output "selledproduct_dns" {
+  value = aws_instance.selledproduct.public_dns
 }

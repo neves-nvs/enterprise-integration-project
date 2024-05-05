@@ -1,80 +1,164 @@
 #!/bin/bash
 
+# warn user before changing directory
+echo "Changing directory to the script location"
+cd "$(dirname "$0")" || exit
+echo "Runnind script from: $(pwd)"
+echo
+
 source ./access.sh
+cd .. # Back to the root directory
 
 # ---------------------------------------------------------------------------- #
 #                                     Data                                     #
 # ---------------------------------------------------------------------------- #
 
-cd RDS-Terraform || exit
-terraform init
+cd Terraform/ || exit
+
+cd RDS || exit
+echo "Creating RDS..."
+terraform init >/dev/null
 terraform apply -auto-approve
-esc=$'\e'
-addressDB="$(terraform state show aws_db_instance.rds | grep address | sed "s/address//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
+MYSQL_DATABASE_URL="$(terraform output -raw rds_dns)"
 cd ..
 
 cd Kafka || exit
-terraform init
+echo "Creating Kafka..."
+terraform init >/dev/null
 terraform apply -auto-approve
 esc=$'\e'
-addresskafka="$(terraform state show 'aws_instance.KafkaConfiguration[0]' | grep public_dns | sed "s/public_dns//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
+KAFKA_BROKER_URL="$(terraform state show 'aws_instance.kafka_broker[0]' | grep public_dns | sed "s/public_dns//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
+cd ..
+
+echo
+cd .. # Back to the root directory
+
+# ---------------------------------------------------------------------------- #
+#                      Set Required Environment Variables                      #
+# ---------------------------------------------------------------------------- #
+cd Scripts || exit
+source ./variables.sh
+cd ..
+
+if [ -z "$DOCKERHUB_USER" ]; then
+    echo "DOCKERHUB_USER is not set"
+    exit 1
+fi
+export TF_VAR_dockerhub_user=$DOCKERHUB_USER
+echo "DOCKERHUB USER: $TF_VAR_dockerhub_user"
+
+if [ -z "$KAFKA_BROKER_URL" ]; then
+    echo "KAFKA_BROKER_URL is not set"
+    exit 1
+fi
+export TF_VAR_kafka_broker_url=$KAFKA_BROKER_URL
+echo "KAFKA BROKER URL: $TF_VAR_kafka_broker_url"
+
+if [ -z "$MYSQL_DATABASE_URL" ]; then
+    echo "MYSQL_DATABASE_URL is not set"
+    exit 1
+fi
+export TF_VAR_rds_dns=$MYSQL_DATABASE_URL
+echo "RDS DNS: $TF_VAR_rds_dns"
+
+echo
+
+# ---------------------------------------------------------------------------- #
+#                             Package Microservices                            #
+# ---------------------------------------------------------------------------- #
+
+cd Scripts || exit
+source ./package.sh
+echo
 cd ..
 
 # ---------------------------------------------------------------------------- #
-#                             Update Microservices                             #
+#                             Deploy Microservices                             #
 # ---------------------------------------------------------------------------- #
 
-(
-    cd microservices/purchase/src/main/resources || exit
-    sed -i '' "s/kafka.bootstrap.servers/#kafka.bootstrap.servers/g" application.properties
-    echo "" >>application.properties
-    echo "kafka.bootstrap.servers=$addresskafka:9092" >>application.properties
-    sed -i '' "s/quarkus.datasource.reactive.url/#quarkus.datasource.reactive.url/g" application.properties
-    echo "" >>application.properties
-    echo "quarkus.datasource.reactive.url=mysql://$addressDB:3306/quarkus_test_all_operations" >>application.properties
-    cd ../../..
-    ./mvnw clean package
-)
+# terraform apply --var 'inputname=asdf'
+cd Terraform || exit
 
+# Customer
+cd Services/ || exit
 (
-    cd microservices/loyaltycard/src/main/resources || exit
-    sed -i '' "s/quarkus.datasource.reactive.url/#quarkus.datasource.reactive.url/g" application.properties
-    echo "" >>application.properties
-    echo "quarkus.datasource.reactive.url=mysql://$addressDB:3306/quarkus_test_all_operations" >>application.properties
-    cd ../../..
-    ./mvnw clean package
-)
-
-(
-    cd microservices/customer/src/main/resources || exit
-    sed -i '' "s/quarkus.datasource.reactive.url/#quarkus.datasource.reactive.url/g" application.properties
-    echo "" >>application.properties
-    echo "quarkus.datasource.reactive.url=mysql://$addressDB:3306/quarkus_test_all_operations" >>application.properties
-    cd ../../..
-    ./mvnw clean package
-)
-
-(
-    cd microservices/shop/src/main/resources || exit
-    sed -i '' "s/quarkus.datasource.reactive.url/#quarkus.datasource.reactive.url/g" application.properties
-    echo "" >>application.properties
-    echo "quarkus.datasource.reactive.url=mysql://$addressDB:3306/quarkus_test_all_operations" >>application.properties
-    cd ../../..
-    ./mvnw clean package
-)
-
-(
-    cd Kafka || exit
-    echo "KAFKA IS AVAILABLE HERE:"
-    echo "$addresskafka"
+    cd Customer || exit
+    terraform init >/dev/null
+    terraform apply -auto-approve
+    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
+    echo "MICROSERVICE customer IS AVAILABLE HERE:"
+    addressMS="$(terraform output -raw customer_dns)"
+    echo "http://${addressMS}:8080/q/swagger-ui/"
     echo
 )
 
-# ---------------------------------------------------------------------------- #
-#                                 Microservices                                #
-# ---------------------------------------------------------------------------- #
+# Shop
+(
+    cd Shop || exit
+    terraform init >/dev/null
+    terraform apply -auto-approve
+    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
+    echo "MICROSERVICE shop IS AVAILABLE HERE:"
+    addressMS="$(terraform output -raw shop_dns)"
+    echo "http://${addressMS}:8080/q/swagger-ui/"
+    echo
+)
 
-source ./deploy-microservices.sh
+(
+    cd LoyaltyCard || exit
+    terraform init >/dev/null
+    terraform apply -auto-approve
+    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
+    echo "MICROSERVICE loyaltycard IS AVAILABLE HERE:"
+    addressMS="$(terraform output -raw loyaltycard_dns)"
+    echo "http://${addressMS}:8080/q/swagger-ui/"
+    echo
+)
+
+(
+    cd Purchase || exit
+    terraform init >/dev/null
+    terraform apply -auto-approve
+    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
+    echo "MICROSERVICE purchase IS AVAILABLE HERE:"
+    addressMS="$(terraform output -raw purchase_dns)"
+    echo "http://${addressMS}:8080/q/swagger-ui/"
+    echo
+)
+
+#DiscountCoupon
+(
+    cd DiscountCoupon || exit
+    terraform init >/dev/null
+    terraform apply -auto-approve
+    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
+    echo "MICROSERVICE discountcoupon IS AVAILABLE HERE:"
+    addressMS="$(terraform output -raw discountcoupon_dns)"
+    echo "http://${addressMS}:8080/q/swagger-ui/"
+    echo
+)
+
+(
+    cd CrossSellingRecommendation || exit
+    terraform init >/dev/null
+    terraform apply -auto-approve
+    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
+    echo "MICROSERVICE crosssellingrecommendation IS AVAILABLE HERE:"
+    addressMS="$(terraform output -raw crosssellingrecommendation_dns)"
+    echo "http://${addressMS}:8080/q/swagger-ui/"
+    echo
+)
+
+(
+    cd SelledProduct || exit
+    terraform init >/dev/null
+    terraform apply -auto-approve
+    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
+    echo "MICROSERVICE selledproduct IS AVAILABLE HERE:"
+    addressMS="$(terraform output -raw selledproduct_dns)"
+    echo "http://${addressMS}:8080/q/swagger-ui/"
+    echo
+)
 
 # ---------------------------------------------------------------------------- #
 #                                Top Level Infra                               #
@@ -107,14 +191,6 @@ source ./deploy-microservices.sh
 # echo "http://${addressCamunda}:8080/camunda"
 # echo
 # cd ..
-
-(
-    cd RDS || exit
-    echo "RDS IS AVAILABLE HERE:"
-    terraform state show aws_db_instance.example | grep address
-    terraform state show aws_db_instance.example | grep port
-    echo
-)
 
 # echo "KONG IS AVAILABLE HERE:"
 # cd KongTerraform || exit
