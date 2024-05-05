@@ -49,6 +49,21 @@ cd ../Terraform || exit
     cd ../..
 )
 
+(
+    cd Services/DiscountCoupon || exit
+    terraform destroy -auto-approve
+)
+
+(
+    cd Services/Crosssellingrecommendation || exit
+    terraform destroy -auto-approve
+)
+
+(
+    cd Services/Selledproduct || exit
+    terraform destroy -auto-approve
+)
+
 # Data
 
 (

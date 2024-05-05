@@ -83,7 +83,7 @@ cd Terraform || exit
 cd Services/ || exit
 (
     cd Customer || exit
-    terraform init >/dev/null
+    terraform init
     terraform apply -auto-approve
     #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE customer IS AVAILABLE HERE:"
@@ -95,7 +95,7 @@ cd Services/ || exit
 # Shop
 (
     cd Shop || exit
-    terraform init >/dev/null
+    terraform init
     terraform apply -auto-approve
     #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE shop IS AVAILABLE HERE:"
@@ -106,7 +106,7 @@ cd Services/ || exit
 
 (
     cd LoyaltyCard || exit
-    terraform init >/dev/null
+    terraform init
     terraform apply -auto-approve
     #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE loyaltycard IS AVAILABLE HERE:"
@@ -117,7 +117,7 @@ cd Services/ || exit
 
 (
     cd Purchase || exit
-    terraform init >/dev/null
+    terraform init
     terraform apply -auto-approve
     #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE purchase IS AVAILABLE HERE:"
@@ -140,7 +140,7 @@ cd Services/ || exit
 
 (
     cd CrossSellingRecommendation || exit
-    terraform init >/dev/null
+    terraform init
     terraform apply -auto-approve
     #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE crosssellingrecommendation IS AVAILABLE HERE:"
@@ -151,7 +151,7 @@ cd Services/ || exit
 
 (
     cd SelledProduct || exit
-    terraform init >/dev/null
+    terraform init
     terraform apply -auto-approve
     #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE selledproduct IS AVAILABLE HERE:"
