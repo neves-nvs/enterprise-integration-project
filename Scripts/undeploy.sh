@@ -27,47 +27,30 @@ cd ../Terraform || exit
 # )
 
 # Microservices
+# go through Services/ doing terraform destroy with a for loop
+cd Services || exit
 
-(
-    cd Services/Purchase || exit
+for d in */; do
+    echo "Destroying $d"
+    cd "$d" || exit
+    # terraform init -upgrade
     terraform destroy -auto-approve
-)
+    cd ..
+done
 
-(
-    cd Services/Customer || exit
-    terraform destroy -auto-approve
-)
-
-(
-    cd Services/Shop || exit
-    terraform destroy -auto-approve
-)
-
-(
-    cd Services/LoyaltyCard || exit
-    terraform destroy -auto-approve
-    cd ../..
-)
-
-(
-    cd Services/DiscountCoupon || exit
-    terraform destroy -auto-approve
-)
-
-(
-    cd Services/Crosssellingrecommendation || exit
-    terraform destroy -auto-approve
-)
-
-(
-    cd Services/Selledproduct || exit
-    terraform destroy -auto-approve
-)
+cd ..
 
 # Data
+# ask if user wants to procedd with the deletion of the data
+read -p "Do you want to delete the data? (y/N) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Data deletion aborted"
+    exit 1
+fi
 
 (
-    cd RDS-Terraform || exit
+    cd RDS || exit
     terraform destroy -auto-approve
 )
 

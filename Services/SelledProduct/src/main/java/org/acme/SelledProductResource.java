@@ -82,7 +82,10 @@ public class SelledProductResource {
 					producer.run(selledProduct);
 				})
 				.onItem().transform(id -> URI.create("/SelledProduct/" + id))
-				.onItem().transform(uri -> Response.created(uri).build());
+				.onItem().transform(uri -> Response.created(uri).build())
+				.onItem()
+				.transform(response -> Response.status(Response.Status.CREATED).entity(response.getEntity()).build());
+
 	}
 
 	@DELETE

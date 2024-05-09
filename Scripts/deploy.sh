@@ -79,7 +79,6 @@ cd ..
 # terraform apply --var 'inputname=asdf'
 cd Terraform || exit
 
-# Customer
 cd Services/ || exit
 (
     cd Customer || exit
@@ -92,12 +91,10 @@ cd Services/ || exit
     echo
 )
 
-# Shop
 (
     cd Shop || exit
     terraform init
     terraform apply -auto-approve
-    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE shop IS AVAILABLE HERE:"
     addressMS="$(terraform output -raw shop_dns)"
     echo "http://${addressMS}:8080/q/swagger-ui/"
@@ -108,7 +105,6 @@ cd Services/ || exit
     cd LoyaltyCard || exit
     terraform init
     terraform apply -auto-approve
-    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE loyaltycard IS AVAILABLE HERE:"
     addressMS="$(terraform output -raw loyaltycard_dns)"
     echo "http://${addressMS}:8080/q/swagger-ui/"
@@ -119,19 +115,16 @@ cd Services/ || exit
     cd Purchase || exit
     terraform init
     terraform apply -auto-approve
-    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE purchase IS AVAILABLE HERE:"
     addressMS="$(terraform output -raw purchase_dns)"
     echo "http://${addressMS}:8080/q/swagger-ui/"
     echo
 )
 
-#DiscountCoupon
 (
     cd DiscountCoupon || exit
     terraform init >/dev/null
     terraform apply -auto-approve
-    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE discountcoupon IS AVAILABLE HERE:"
     addressMS="$(terraform output -raw discountcoupon_dns)"
     echo "http://${addressMS}:8080/q/swagger-ui/"
@@ -142,7 +135,6 @@ cd Services/ || exit
     cd CrossSellingRecommendation || exit
     terraform init
     terraform apply -auto-approve
-    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE crosssellingrecommendation IS AVAILABLE HERE:"
     addressMS="$(terraform output -raw crosssellingrecommendation_dns)"
     echo "http://${addressMS}:8080/q/swagger-ui/"
@@ -153,55 +145,78 @@ cd Services/ || exit
     cd SelledProduct || exit
     terraform init
     terraform apply -auto-approve
-    #terraform state show 'aws_instance.exampleDeployQuarkus' |grep public_dns
     echo "MICROSERVICE selledproduct IS AVAILABLE HERE:"
     addressMS="$(terraform output -raw selledproduct_dns)"
     echo "http://${addressMS}:8080/q/swagger-ui/"
     echo
 )
 
+cd ../..
+
 # ---------------------------------------------------------------------------- #
-#                                Top Level Infra                               #
+#                               Display All Info                               #
 # ---------------------------------------------------------------------------- #
 
-# Terraform 1 - Kong
-# cd KongTerraform || exit
-# terraform init
-# terraform apply -auto-approve
-# cd ..
+(
+    cd Terraform || exit
 
-# Terraform 2 - Konga
-# cd KongaTerraform || exit
-# terraform init
-# terraform apply -auto-approve
-# cd ..
+    (
+        cd RDS || exit
+        echo "RDS IS AVAILABLE HERE:"
+        terraform output -raw rds_dns
+        echo
+    )
 
-# Terraform - Camunda
-# cd Camunda-Terraform
-# terraform init
-# terraform apply -auto-approve
-# cd ..
+    (
+        cd Kafka || exit
+        echo "KAFKA IS AVAILABLE HERE:"
+        terraform state show 'aws_instance.kafka_broker[0]' | grep public_dns
+        echo
+    )
 
-# # Showing all the PUBLIC_DNSs
-# #echo CAMUNDA -
-# cd Camunda-Terraform || exit
-# #terraform state show aws_instance.camunda_engine |grep public_dns
-# echo "CAMUNDA IS AVAILABLE HERE:"
-# addressCamunda="$(terraform state show aws_instance.camunda_engine | grep public_dns | sed "s/public_dns//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
-# echo "http://${addressCamunda}:8080/camunda"
-# echo
-# cd ..
+    (
 
-# echo "KONG IS AVAILABLE HERE:"
-# cd KongTerraform || exit
-# addressKong="$(terraform state show aws_instance.exampleInstallKong | grep public_dns | sed "s/public_dns//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
-# echo "http://${addressKong}:8080/"
-# echo
-# cd ..
+        cd Services || exit
+        (
+            cd Shop || exit
+            echo "SHOP IS AVAILABLE HERE:"
+            echo "http://$(terraform output -raw shop_dns):8080/q/swagger-ui/"
+        )
 
-# echo "KONGA IS AVAILABLE HERE:"
-# cd KongaTerraform || exit
-# addressKonga="$(terraform state show aws_instance.exampleInstallKonga | grep public_dns | sed "s/public_dns//g" | sed "s/=//g" | sed "s/\"//g" | sed "s/ //g" | sed "s/$esc\[[0-9;]*m//g")"
-# echo "http://${addressKonga}:1337/"
-# echo
-# cd ..
+        (
+            cd Customer || exit
+            echo "CUSTOMER IS AVAILABLE HERE:"
+            echo "http://$(terraform output -raw customer_dns):8080/q/swagger-ui/"
+        )
+
+        (
+            cd LoyaltyCard || exit
+            echo "LOYALTYCARD IS AVAILABLE HERE:"
+            echo "http://$(terraform output -raw loyaltycard_dns):8080/q/swagger-ui/"
+        )
+
+        (
+            cd Purchase || exit
+            echo "PURCHASE IS AVAILABLE HERE:"
+            echo "http://$(terraform output -raw purchase_dns):8080/q/swagger-ui/"
+        )
+
+        (
+            cd DiscountCoupon || exit
+            echo "DISCOUNTCOUPON IS AVAILABLE HERE:"
+            echo "http://$(terraform output -raw discountcoupon_dns):8080/q/swagger-ui/"
+        )
+
+        (
+            cd CrossSellingRecommendation || exit
+            echo "CROSSSELLINGRECOMMENDATION IS AVAILABLE HERE:"
+            echo "http://$(terraform output -raw crosssellingrecommendation_dns):8080/q/swagger-ui/"
+        )
+
+        (
+            cd SelledProduct || exit
+            echo "SELLEDPRODUCT IS AVAILABLE HERE:"
+            echo "http://$(terraform output -raw selledproduct_dns):8080/q/swagger-ui/"
+        )
+    )
+)
