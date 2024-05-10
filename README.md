@@ -1,11 +1,15 @@
 # Scenario 1
 
-## Groud
+## Group
 
 - Diogo Ferreira
 - Diogo Borges
 
 ## Guide
+
+### Topics
+
+- Kafka Cluster
 
 - [ ] Start AWS Lab
 - [ ] Get AWS credentials and place them into `~/.aws/credentials`
