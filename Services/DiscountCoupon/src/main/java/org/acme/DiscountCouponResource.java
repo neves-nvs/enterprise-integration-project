@@ -10,6 +10,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import java.net.URI;
+
+import org.acme.DiscountCoupon.DiscountType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -39,10 +41,10 @@ public class DiscountCouponResource {
 				.query("DROP TABLE IF EXISTS DiscountCoupons")
 				.execute()
 				.flatMap(r -> client.query(
-						"CREATE TABLE DiscountCoupons (id SERIAL PRIMARY KEY, LoyaltyCardId BIGINT UNSIGNED, DiscountType INT UNSIGNED, ExpiryDate DATETIME)")
+						"CREATE TABLE DiscountCoupons (id SERIAL PRIMARY KEY, loyaltyCardId BIGINT UNSIGNED, discountType BIGINT UNSIGNED, expiryDate DATETIME)")
 						.execute())
 				.flatMap(r -> client.query(
-						"INSERT INTO DiscountCoupons (LoyaltyCardId, DiscountType, ExpiryDate) VALUES(1, 1, '2024-01-19')")
+						"INSERT INTO DiscountCoupons (loyaltyCardId, discountType, expiryDate) VALUES(1, 1, '2024-01-19')")
 						.execute())
 				.await()
 				.indefinitely();
