@@ -13,7 +13,7 @@ public class MySQLTestResource implements QuarkusTestResourceLifecycleManager {
 
     @Override
     public Map<String, String> start() {
-        mySQLContainer.withDatabaseName("DiscountCoupons")
+        mySQLContainer.withDatabaseName("CrossSellingRecommendations")
                 .withUsername("teste")
                 .withPassword("testeteste");
         mySQLContainer.start();
