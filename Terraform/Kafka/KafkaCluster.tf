@@ -1,18 +1,3 @@
-terraform {
-  required_version = ">= 1.0.0, < 2.0.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = "us-east-1"
-}
-
 resource "aws_instance" "kafka_broker" {
   ami                    = "ami-0cf10cdf9fcd62d37"
   instance_type          = "t2.small"
@@ -20,7 +5,7 @@ resource "aws_instance" "kafka_broker" {
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
 
-  user_data = file("creation.sh")
+  user_data = file("${path.module}/creation.sh")
 
   user_data_replace_on_change = true
 
@@ -64,3 +49,6 @@ variable "security_group_name" {
   default     = "terraform-kafka-broker"
 }
 
+output "kafka_broker_url" {
+  value = aws_instance.kafka_broker[0].public_dns
+}
