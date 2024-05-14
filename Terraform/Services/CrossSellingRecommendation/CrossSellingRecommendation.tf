@@ -35,7 +35,6 @@ resource "aws_instance" "crosssellingrecommendation" {
     rds_dns          = var.rds_dns
     dockerhub_user   = var.dockerhub_user
     kafka_broker_url = var.kafka_broker_url
-
   })
 
   tags = {

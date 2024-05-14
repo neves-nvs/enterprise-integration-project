@@ -1,6 +1,5 @@
 package org.acme;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 import io.smallrye.mutiny.Multi;

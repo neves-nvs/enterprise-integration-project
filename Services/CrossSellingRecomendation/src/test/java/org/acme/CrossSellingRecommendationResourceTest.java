@@ -121,7 +121,7 @@ public class CrossSellingRecommendationResourceTest {
   void testUpdate() {
     Long id = insertTestRecommendation(103L);
     given()
-        .when().put("/CrossSellingRecommendation/" + id + 104L)
+        .when().put("/CrossSellingRecommendation/" + id + "/" + 104L)
         .then()
         .statusCode(204);
   }
