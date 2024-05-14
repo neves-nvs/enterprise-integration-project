@@ -70,7 +70,9 @@ public class CrossSellingRecomendationResource {
 				.save(client, discountCoupon.idLoyaltyCard)
 				.onItem().invoke(() -> emitter.send(discountCoupon))
 				.onItem().transform(id -> URI.create("/discountCoupon/" + id))
-				.onItem().transform(uri -> Response.created(uri).build());
+				.onItem().transform(uri -> Response.created(uri).build())
+				.onItem()
+				.transform(response -> Response.status(Response.Status.CREATED).entity(response.getEntity()).build());
 	}
 
 	@DELETE

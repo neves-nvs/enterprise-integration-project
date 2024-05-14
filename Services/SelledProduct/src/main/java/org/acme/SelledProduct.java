@@ -7,7 +7,6 @@ import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class SelledProduct {

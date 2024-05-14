@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
 @QuarkusTestResource(MySQLTestResource.class)
-public class CustomerTest {
+class CustomerTest {
 
     @Inject
     MySQLPool client;

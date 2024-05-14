@@ -3,14 +3,11 @@ package org.acme;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-import org.acme.SelledProduct;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import org.apache.kafka.clients.admin.AdminClient;
