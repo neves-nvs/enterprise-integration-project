@@ -1,5 +1,6 @@
 # TODO Handle these files better
 *.pem
+kafka_exec
 
 # Quarkus
 .quarkus

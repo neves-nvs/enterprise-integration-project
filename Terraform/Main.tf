@@ -18,13 +18,8 @@ variable "dockerhub_user" {
   type        = string
 }
 
-variable "rds_dns" {
-  description = "The DNS of the RDS instance"
-  type        = string
-}
-
-variable "kafka_broker_url" {
-  description = "The URL of the Kafka broker"
+variable "key_name" {
+  description = "The name of the key pair"
   type        = string
 }
 
@@ -39,7 +34,7 @@ module "kafka" {
 resource "null_resource" "check_kafka_cluster" {
   # Triggers the script when the Kafka broker URL changes
   triggers = {
-    kafka_broker_url = aws_instance.kafka_broker.public_dns
+    kafka_broker_url = module.kafka.kafka_broker_url
   }
 
   provisioner "local-exec" {
@@ -47,7 +42,7 @@ resource "null_resource" "check_kafka_cluster" {
   }
 
   depends_on = [
-    aws_instance.kafka_broker
+    module.kafka
   ]
 }
 
@@ -60,4 +55,5 @@ module "services" {
   rds_dns          = module.relational_database.rds_dns
   kafka_broker_url = module.kafka.kafka_broker_url
   dockerhub_user   = var.dockerhub_user
+  key_name         = var.key_name
 }

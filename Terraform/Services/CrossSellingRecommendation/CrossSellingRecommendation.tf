@@ -19,6 +19,11 @@ variable "kafka_broker_url" {
   type        = string
 }
 
+variable "key_name" {
+  description = "The name of the key pair"
+  type        = string
+}
+
 resource "aws_instance" "crosssellingrecommendation" {
   # ARM
   ami           = "ami-0cd7323ab3e63805f"
@@ -29,7 +34,7 @@ resource "aws_instance" "crosssellingrecommendation" {
   #  instance_type           = "t2.micro"
 
   vpc_security_group_ids = [aws_security_group.instance.id]
-  key_name               = "ei2024Sprint1"
+  key_name               = var.key_name
 
   user_data = templatefile("${path.module}/quarkus.sh", {
     rds_dns          = var.rds_dns
