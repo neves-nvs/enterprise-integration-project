@@ -36,7 +36,26 @@ module "kafka" {
   source = "./Kafka"
 }
 
+resource "null_resource" "check_kafka_cluster" {
+  # Triggers the script when the Kafka broker URL changes
+  triggers = {
+    kafka_broker_url = aws_instance.kafka_broker.public_dns
+  }
+
+  provisioner "local-exec" {
+    command = "${path.module}/check_kafka.sh ${self.triggers.kafka_broker_url}"
+  }
+
+  depends_on = [
+    aws_instance.kafka_broker
+  ]
+}
+
 module "services" {
+  depends_on = [
+    module.relational_database,
+    null_resource.check_kafka_cluster,
+  ]
   source           = "./Services"
   rds_dns          = module.relational_database.rds_dns
   kafka_broker_url = module.kafka.kafka_broker_url

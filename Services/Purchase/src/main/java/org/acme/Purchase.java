@@ -6,7 +6,6 @@ import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
-import java.sql.Timestamp;
 
 public class Purchase {
     public Long id;

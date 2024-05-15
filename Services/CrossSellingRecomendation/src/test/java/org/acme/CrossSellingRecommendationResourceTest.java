@@ -19,6 +19,7 @@ import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -36,6 +37,7 @@ import jakarta.inject.Inject;
 @Testcontainers
 @ExtendWith(QuarkusTestExtension.class)
 @QuarkusTestResource(KafkaTestResource.class)
+@DisplayName("CrossSellingRecommendationResource Tests")
 public class CrossSellingRecommendationResourceTest {
 
   @Inject
@@ -59,6 +61,7 @@ public class CrossSellingRecommendationResourceTest {
   }
 
   @Test
+  @DisplayName("/CrossSellingRecommendation GET")
   void testGet() {
     insertTestRecommendation(100L);
     given()
@@ -69,6 +72,7 @@ public class CrossSellingRecommendationResourceTest {
   }
 
   @Test
+  @DisplayName("/CrossSellingRecommendation/{id} GET")
   void testGetSingle() {
     Long id = insertTestRecommendation(100L);
     given()
@@ -79,7 +83,7 @@ public class CrossSellingRecommendationResourceTest {
   }
 
   @Test
-  @Description("Test the creation of a discount coupon")
+  @DisplayName("/CrossSellingRecommendation POST")
   void testCreate() {
     CrossSellingRecommendation recommendation = new CrossSellingRecommendation(1L, 101L);
     given()
@@ -109,6 +113,7 @@ public class CrossSellingRecommendationResourceTest {
   }
 
   @Test
+  @DisplayName("/CrossSellingRecommendation/{id} DELETE")
   void testDelete() {
     Long id = insertTestRecommendation(102L);
     given()
@@ -118,6 +123,7 @@ public class CrossSellingRecommendationResourceTest {
   }
 
   @Test
+  @DisplayName("/CrossSellingRecommendation/{id}/{idLoyaltyCard} PUT")
   void testUpdate() {
     Long id = insertTestRecommendation(103L);
     given()

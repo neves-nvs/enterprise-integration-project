@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import io.smallrye.mutiny.Uni;
@@ -18,6 +19,7 @@ import jakarta.inject.Inject;
 @QuarkusTest
 @QuarkusTestResource(MySQLTestResource.class)
 @QuarkusTestResource(KafkaTestResource.class)
+@DisplayName("CrossSellingRecommendation Tests")
 class CrossSellingRecommendationTest {
 
     @Inject
@@ -35,6 +37,7 @@ class CrossSellingRecommendationTest {
     }
 
     @Test
+    @DisplayName("Test Find All")
     void testFindAll() {
         insertTestRecommendation(1L, 100L);
         Multi<CrossSellingRecommendation> recommendations = CrossSellingRecommendation.findAll(client);
@@ -42,6 +45,7 @@ class CrossSellingRecommendationTest {
     }
 
     @Test
+    @DisplayName("Test Find By Id")
     void testFindById() {
         Long id = insertTestRecommendation(2L, 100L);
         Uni<CrossSellingRecommendation> coupon = CrossSellingRecommendation.findById(client, id);
@@ -49,6 +53,7 @@ class CrossSellingRecommendationTest {
     }
 
     @Test
+    @DisplayName("Test Save")
     void testSave() {
         CrossSellingRecommendation recommendation = new CrossSellingRecommendation();
         Uni<Boolean> result = recommendation.save(client, 101L);
@@ -56,6 +61,7 @@ class CrossSellingRecommendationTest {
     }
 
     @Test
+    @DisplayName("Test Delete")
     void testDelete() {
         Long id = insertTestRecommendation(3L, 102L);
         Uni<Boolean> result = CrossSellingRecommendation.delete(client, id);
@@ -63,6 +69,7 @@ class CrossSellingRecommendationTest {
     }
 
     @Test
+    @DisplayName("Test Update")
     void testUpdate() {
         Long id = insertTestRecommendation(4L, 103L);
         Uni<Boolean> result = CrossSellingRecommendation.update(client, id, 104L);
