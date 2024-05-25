@@ -32,6 +32,7 @@ module "kafka" {
 }
 
 resource "null_resource" "check_kafka_cluster" {
+  depends_on = [module.kafka]
   # Triggers the script when the Kafka broker URL changes
   triggers = {
     kafka_broker_url = module.kafka.kafka_broker_url
@@ -41,9 +42,6 @@ resource "null_resource" "check_kafka_cluster" {
     command = "${path.module}/check_kafka.sh ${self.triggers.kafka_broker_url}"
   }
 
-  depends_on = [
-    module.kafka
-  ]
 }
 
 module "services" {
@@ -56,4 +54,16 @@ module "services" {
   kafka_broker_url = module.kafka.kafka_broker_url
   dockerhub_user   = var.dockerhub_user
   key_name         = var.key_name
+}
+
+module "camunda" {
+  source = "./Camunda"
+}
+
+module "kong" {
+  source = "./Kong"
+}
+
+module "konga" {
+  source = "./Konga"
 }
