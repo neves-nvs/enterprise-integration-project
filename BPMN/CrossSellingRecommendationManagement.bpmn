@@ -1,13 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1w6c6qu" targetNamespace="http://bpmn.io/schema/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
-  <bpmn:process id="Process_1xf77jc" isExecutable="true" >
-    <bpmn:startEvent id="StartEvent_1" />
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn:collaboration id="Collaboration_18adieo">
+    <bpmn:participant id="Participant_1u7hs8b" processRef="CrossSellingRecommendationProcess" />
+  </bpmn:collaboration>
+  <bpmn:process id="CrossSellingRecommendationProcess" name="Cross Selling Recommendation Process" isExecutable="true">
+    <bpmn:task id="RecordPurchaseTask" name="Record Purchase">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="purchaseDetails">${purchaseDetails}</camunda:inputParameter>
+        </camunda:inputOutput>
+        <camunda:properties>
+          <camunda:property name="service" value="PurchaseService" />
+          <camunda:property name="operation" value="recordPurchase" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fgfc8e</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:startEvent id="StartEvent" name="Purchase Made">
+      <bpmn:outgoing>Flow1</bpmn:outgoing>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_14rcgz0" />
+    </bpmn:startEvent>
+    <bpmn:task id="Activity_1dqoe30" name="Fetch Customer Details">
+      <bpmn:incoming>Flow_0fgfc8e</bpmn:incoming>
+      <bpmn:outgoing>Flow_036ss3d</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_038snjy" name="Fetch Shop Details">
+      <bpmn:incoming>Flow_036ss3d</bpmn:incoming>
+      <bpmn:outgoing>Flow_02x9cus</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_0wiax2g" name="Generate Cross Selling Recommendations">
+      <bpmn:incoming>Flow_02x9cus</bpmn:incoming>
+      <bpmn:outgoing>Flow_0k3duzs</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_1es2yba" name="Upload Cross Selling Recommendations">
+      <bpmn:incoming>Flow_0k3duzs</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lylg63</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="Event_1y1gxif">
+      <bpmn:incoming>Flow_1lylg63</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow1" sourceRef="StartEvent" targetRef="RecordPurchaseTask" />
+    <bpmn:sequenceFlow id="Flow_0fgfc8e" sourceRef="RecordPurchaseTask" targetRef="Activity_1dqoe30" />
+    <bpmn:sequenceFlow id="Flow_036ss3d" sourceRef="Activity_1dqoe30" targetRef="Activity_038snjy" />
+    <bpmn:sequenceFlow id="Flow_02x9cus" sourceRef="Activity_038snjy" targetRef="Activity_0wiax2g" />
+    <bpmn:sequenceFlow id="Flow_0k3duzs" sourceRef="Activity_0wiax2g" targetRef="Activity_1es2yba" />
+    <bpmn:sequenceFlow id="Flow_1lylg63" sourceRef="Activity_1es2yba" targetRef="Event_1y1gxif" />
   </bpmn:process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1xf77jc">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="179" y="159" width="36" height="36" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_CrossSellingRecommendation">
+    <bpmndi:BPMNPlane id="BPMNPlane_CrossSellingRecommendation" bpmnElement="Collaboration_18adieo">
+      <bpmndi:BPMNShape id="Participant_1u7hs8b_di" bpmnElement="Participant_1u7hs8b" isHorizontal="true">
+        <omgdc:Bounds x="158" y="83" width="992" height="337" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_RecordPurchaseTask" bpmnElement="RecordPurchaseTask">
+        <omgdc:Bounds x="340" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1689f6r_di" bpmnElement="StartEvent">
+        <omgdc:Bounds x="240" y="190" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="219" y="226" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dqoe30_di" bpmnElement="Activity_1dqoe30">
+        <omgdc:Bounds x="490" y="170" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_038snjy_di" bpmnElement="Activity_038snjy">
+        <omgdc:Bounds x="640" y="170" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wiax2g_di" bpmnElement="Activity_0wiax2g">
+        <omgdc:Bounds x="790" y="170" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1es2yba_di" bpmnElement="Activity_1es2yba">
+        <omgdc:Bounds x="940" y="170" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1y1gxif_di" bpmnElement="Event_1y1gxif">
+        <omgdc:Bounds x="1092" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_Flow1" bpmnElement="Flow1">
+        <omgdi:waypoint x="276" y="208" />
+        <omgdi:waypoint x="340" y="208" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fgfc8e_di" bpmnElement="Flow_0fgfc8e">
+        <omgdi:waypoint x="440" y="210" />
+        <omgdi:waypoint x="490" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_036ss3d_di" bpmnElement="Flow_036ss3d">
+        <omgdi:waypoint x="590" y="210" />
+        <omgdi:waypoint x="640" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02x9cus_di" bpmnElement="Flow_02x9cus">
+        <omgdi:waypoint x="740" y="210" />
+        <omgdi:waypoint x="790" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k3duzs_di" bpmnElement="Flow_0k3duzs">
+        <omgdi:waypoint x="890" y="210" />
+        <omgdi:waypoint x="940" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lylg63_di" bpmnElement="Flow_1lylg63">
+        <omgdi:waypoint x="1040" y="210" />
+        <omgdi:waypoint x="1092" y="210" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
