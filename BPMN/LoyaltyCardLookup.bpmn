@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns2:definitions xmlns:ns2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:ns3="http://www.omg.org/spec/DD/20100524/DI" xmlns:ns4="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:ns5="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <ns2:collaboration id="coll-DEMO2BPMN">
+    <ns2:participant id="Participant_0gaaws6" name="System of interest" processRef="Process_0xrrylx" />
+  </ns2:collaboration>
+  <ns2:message id="Message_3mbgiuk" name="Message_3mbgiuk" />
+  <ns2:message id="Message_2b43ets" name="Message_2b43ets" />
+  <ns2:message id="Message_3l0mi53" name="Message_3l0mi53" />
+  <ns2:message id="Message_1p7o4fd" name="Message_1p7o4fd" />
+  <ns2:message id="Message_3p4hhrm" name="Message_3p4hhrm" />
+  <ns2:message id="Message_314vfbg" name="Message_314vfbg" />
+  <ns2:message id="Message_2s57mqp" name="Message_2s57mqp" />
+  <ns2:message id="Message_1qktfb5" name="Message_1qktfb5" />
+  <ns2:process id="Process_0xrrylx" isExecutable="true" camunda:historyTimeToLive="7">
+    <ns2:laneSet id="LaneSet_07vhlsb">
+      <ns2:lane id="Lane_809d9093-4d65-4bc2-8b27-6c7d8f8b8794" name="Initiator TK01">
+        <ns2:flowNodeRef>Activity_0u8ysv3</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Activity_07gnlxw</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Activity_1ykd7ra</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Event_1khqtbt</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Event_0b5s53e</ns2:flowNodeRef>
+      </ns2:lane>
+    </ns2:laneSet>
+    <ns2:serviceTask id="Activity_0u8ysv3" name="Retrieve LoyaltyCards list">
+      <ns2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8080/engine-rest</camunda:inputParameter>
+            <camunda:outputParameter name="CardsList">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </ns2:extensionElements>
+      <ns2:incoming>Flow_10cujk8</ns2:incoming>
+      <ns2:outgoing>Flow_06ygbs3</ns2:outgoing>
+    </ns2:serviceTask>
+    <ns2:userTask id="Activity_07gnlxw" name="Decide the type of  loyaltycard to lookup" camunda:assignee="demo">
+      <ns2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="CardsList" label="The available cards are" type="string">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="ChosenLoyaltyCard" label="Input the number of the desired card" type="string" />
+        </camunda:formData>
+      </ns2:extensionElements>
+      <ns2:incoming>Flow_06ygbs3</ns2:incoming>
+      <ns2:outgoing>Flow_0qmxvrg</ns2:outgoing>
+    </ns2:userTask>
+    <ns2:serviceTask id="Activity_1ykd7ra" name="Get loyaltycard">
+      <ns2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-44-200-150-141.compute-1.amazonaws.com:8080/loyaltycard/${ChosenLoyaltyCard}</camunda:inputParameter>
+            <camunda:outputParameter name="LoyaltyCard">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </ns2:extensionElements>
+      <ns2:incoming>Flow_0qmxvrg</ns2:incoming>
+      <ns2:outgoing>Flow_080r81e</ns2:outgoing>
+    </ns2:serviceTask>
+    <ns2:startEvent id="Event_1khqtbt">
+      <ns2:outgoing>Flow_10cujk8</ns2:outgoing>
+    </ns2:startEvent>
+    <ns2:endEvent id="Event_0b5s53e">
+      <ns2:incoming>Flow_080r81e</ns2:incoming>
+    </ns2:endEvent>
+    <ns2:sequenceFlow id="Flow_10cujk8" sourceRef="Event_1khqtbt" targetRef="Activity_0u8ysv3" />
+    <ns2:sequenceFlow id="Flow_06ygbs3" sourceRef="Activity_0u8ysv3" targetRef="Activity_07gnlxw" />
+    <ns2:sequenceFlow id="Flow_0qmxvrg" sourceRef="Activity_07gnlxw" targetRef="Activity_1ykd7ra" />
+    <ns2:sequenceFlow id="Flow_080r81e" sourceRef="Activity_1ykd7ra" targetRef="Event_0b5s53e" />
+  </ns2:process>
+  <ns4:BPMNDiagram id="diagram-DEMO2BPMN">
+    <ns4:BPMNPlane id="plane-DEMO2BPMN" bpmnElement="coll-DEMO2BPMN">
+      <ns4:BPMNShape id="BPMNShape_0253k56" bpmnElement="Participant_0gaaws6" isHorizontal="true">
+        <ns5:Bounds x="155" y="85" width="880" height="290" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_1f7pnie" bpmnElement="Lane_809d9093-4d65-4bc2-8b27-6c7d8f8b8794" isHorizontal="true">
+        <ns5:Bounds x="185" y="85" width="850" height="290" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_01elmg9" bpmnElement="Activity_0u8ysv3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="360" y="210" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_12ox85r" bpmnElement="Activity_07gnlxw">
+        <ns5:Bounds x="555" y="210" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_0alvps0" bpmnElement="Activity_1ykd7ra" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="725" y="210" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_1iaddu8" bpmnElement="Event_1khqtbt">
+        <ns5:Bounds x="237" y="232" width="36" height="36" />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_0jc2laj" bpmnElement="Event_0b5s53e">
+        <ns5:Bounds x="917" y="232" width="36" height="36" />
+        <ns4:BPMNLabel>
+          <ns5:Bounds x="307" y="178" width="24" height="14" />
+        </ns4:BPMNLabel>
+      </ns4:BPMNShape>
+      <ns4:BPMNEdge id="BPMNEdge_19low8j" bpmnElement="Flow_10cujk8">
+        <ns3:waypoint x="273" y="250" />
+        <ns3:waypoint x="360" y="250" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="BPMNEdge_0y3g8c0" bpmnElement="Flow_06ygbs3">
+        <ns3:waypoint x="460" y="250" />
+        <ns3:waypoint x="555" y="250" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="BPMNEdge_0c0fm4s" bpmnElement="Flow_0qmxvrg">
+        <ns3:waypoint x="655" y="250" />
+        <ns3:waypoint x="725" y="250" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="Flow_080r81e_di" bpmnElement="Flow_080r81e">
+        <ns3:waypoint x="825" y="250" />
+        <ns3:waypoint x="917" y="250" />
+      </ns4:BPMNEdge>
+    </ns4:BPMNPlane>
+  </ns4:BPMNDiagram>
+</ns2:definitions>
