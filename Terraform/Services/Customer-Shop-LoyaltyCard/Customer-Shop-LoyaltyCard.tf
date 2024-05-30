@@ -11,7 +11,7 @@ variable "dockerhub_user" {
 variable "security_group_name" {
   description = "The name of the security group"
   type        = string
-  default     = "terraform-quarkus-customer"
+  default     = "terraform-quarkus-customershop-loyaltycard-instance"
 }
 
 variable "key_name" {
@@ -19,7 +19,7 @@ variable "key_name" {
   type        = string
 }
 
-resource "aws_instance" "customer" {
+resource "aws_instance" "customer-shop-loyaltycard" {
   # ARM
   ami           = "ami-0cd7323ab3e63805f"
   instance_type = "c6g.medium"
@@ -31,14 +31,14 @@ resource "aws_instance" "customer" {
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = var.key_name
 
-  user_data = templatefile("${path.module}/quarkus.sh", {
+  user_data = templatefile("${path.module}/services.sh", {
     rds_dns        = var.rds_dns
     dockerhub_user = var.dockerhub_user
   })
   user_data_replace_on_change = true
 
   tags = {
-    Name = "terraform-instance-quarkus-customer"
+    Name = "terraform-instance-quarkus-customer-shop-loyaltycard"
   }
 }
 
@@ -60,6 +60,6 @@ resource "aws_security_group" "instance" {
   }
 }
 
-output "customer_dns" {
-  value = aws_instance.customer.public_dns
+output "public_dns" {
+  value = aws_instance.customer-shop-loyaltycard.public_dns
 }

@@ -38,4 +38,14 @@ sudo docker run -d --name kong-gateway \
   -p 127.0.0.1:8444:8444 \
   kong:3.1.1
 
+echo "Konga"
+
+sudo yum install -y docker
+
+sudo service docker start
+
+sudo docker pull pantsel/konga
+
+sudo docker run -d --name konga -p 1337:1337 pantsel/konga
+
 echo "Finished."

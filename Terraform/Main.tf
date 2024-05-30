@@ -55,15 +55,18 @@ module "services" {
   dockerhub_user   = var.dockerhub_user
   key_name         = var.key_name
 }
+output "customer-shop-loyaltycard-public_dns" {
+  value = module.services.customer-shop-loyaltycard-public_dns
+}
 
 module "camunda" {
   source = "./Camunda"
 }
+# output "camunda-public_dns" {
+#   value = module.services.camunda-public_dns
+# }
 
 module "kong" {
   source = "./Kong"
 }
 
-module "konga" {
-  source = "./Konga"
-}

@@ -47,31 +47,12 @@ output "security_group_id" {
   value = aws_security_group.instance.id
 }
 
-module "shop" {
-  source = "./Shop"
-  #   security_group_name = var.security_group_name
-  rds_dns           = var.rds_dns
-  dockerhub_user    = var.dockerhub_user
-  security_group_id = aws_security_group.instance.id
-  key_name          = var.key_name
-}
-
-module "customer" {
-  source = "./Customer"
+module "customer-shop-loyaltycard" {
+  source = "./Customer-Shop-LoyaltyCard"
   #   security_group_name = var.security_group_name
   rds_dns        = var.rds_dns
   dockerhub_user = var.dockerhub_user
-  #   kafka_broker_url = var.kafka_broker_url
-  key_name = var.key_name
-}
-
-module "loyalty-card" {
-  source = "./LoyaltyCard"
-  #   security_group_name = var.security_group_name
-  rds_dns          = var.rds_dns
-  dockerhub_user   = var.dockerhub_user
-  kafka_broker_url = var.kafka_broker_url
-  key_name         = var.key_name
+  key_name       = var.key_name
 }
 
 module "purchase" {
@@ -108,4 +89,8 @@ module "selled-product" {
   dockerhub_user   = var.dockerhub_user
   kafka_broker_url = var.kafka_broker_url
   key_name         = var.key_name
+}
+
+output "customer-shop-loyaltycard-public_dns" {
+  value = module.customer-shop-loyaltycard.public_dns
 }

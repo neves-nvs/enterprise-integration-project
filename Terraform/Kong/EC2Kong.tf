@@ -4,7 +4,7 @@ resource "aws_instance" "exampleInstallKong" {
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = "vockey"
 
-  user_data = file("${path.module}/deploy.sh")
+  user_data = file("${path.module}/kong-konga.sh")
 
   user_data_replace_on_change = true
 

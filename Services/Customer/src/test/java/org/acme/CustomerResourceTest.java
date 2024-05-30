@@ -1,28 +1,17 @@
 package org.acme;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.hamcrest.Matchers.is;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Properties;
-import java.util.Collections;
-
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestExtension;
 import io.restassured.http.ContentType;
 import io.vertx.core.cli.annotations.Description;
-import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import jakarta.inject.Inject;
 

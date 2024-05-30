@@ -48,10 +48,32 @@ In this report, we will test all microservices to assess the effectiveness of th
 
 ### 3.4. Installation
 
+Terraform will be used to deploy the whole infrastructure directly. Given that we only need to run the following commands to deploy the whole infrastructure:
+
 ```bash
 cd Terraform
 Terraform init
 Terraform apply --auto-approve
+```
+
+---
+
+In need to destroy just a part of the infrastructure, now that everything is coupled under a single terraform, we must leverage terraform destroy in a more granular way.
+
+If you have access to `fzf`, you can use the following script to destroy a specific resource:
+
+> Be careful to not destroy a resource that is being used by another resource, as they may not be able to recover (this is recommended to destroy microservices and kong/konga)
+
+```bash
+terraform destroy -target=$(terraform state list | fzf)
+```
+
+if you don't have `fzf`, you can use the following script to destroy a specific resource:
+
+```bash
+terraform state list
+# copy the resource you want to destroy
+terraform destroy -target=<resource>
 ```
 
 ### 3.5. Configuration (Parametrization)
