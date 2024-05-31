@@ -14,19 +14,44 @@
   <ns2:process id="Process_0xrrylx" isExecutable="true" camunda:historyTimeToLive="7">
     <ns2:laneSet id="LaneSet_07vhlsb">
       <ns2:lane id="Lane_809d9093-4d65-4bc2-8b27-6c7d8f8b8794" name="Initiator TK01">
-        <ns2:flowNodeRef>Activity_0u8ysv3</ns2:flowNodeRef>
-        <ns2:flowNodeRef>Activity_07gnlxw</ns2:flowNodeRef>
-        <ns2:flowNodeRef>Activity_1ykd7ra</ns2:flowNodeRef>
         <ns2:flowNodeRef>Event_1khqtbt</ns2:flowNodeRef>
         <ns2:flowNodeRef>Event_0b5s53e</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Activity_07gnlxw</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Activity_0u8ysv3</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Activity_1ykd7ra</ns2:flowNodeRef>
+        <ns2:flowNodeRef>Activity_1czx17n</ns2:flowNodeRef>
       </ns2:lane>
     </ns2:laneSet>
+    <ns2:startEvent id="Event_1khqtbt">
+      <ns2:outgoing>Flow_10cujk8</ns2:outgoing>
+    </ns2:startEvent>
+    <ns2:sequenceFlow id="Flow_10cujk8" sourceRef="Event_1khqtbt" targetRef="Activity_0u8ysv3" />
+    <ns2:sequenceFlow id="Flow_06ygbs3" sourceRef="Activity_0u8ysv3" targetRef="Activity_07gnlxw" />
+    <ns2:sequenceFlow id="Flow_0qmxvrg" sourceRef="Activity_07gnlxw" targetRef="Activity_1ykd7ra" />
+    <ns2:sequenceFlow id="Flow_080r81e" sourceRef="Activity_1ykd7ra" targetRef="Activity_1czx17n" />
+    <ns2:endEvent id="Event_0b5s53e">
+      <ns2:incoming>Flow_060xg14</ns2:incoming>
+    </ns2:endEvent>
+    <ns2:sequenceFlow id="Flow_060xg14" sourceRef="Activity_1czx17n" targetRef="Event_0b5s53e" />
+    <ns2:userTask id="Activity_07gnlxw" name="Decide the type of  loyaltycard to lookup" camunda:assignee="demo">
+      <ns2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="CardsList" label="The available cards are" type="string">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="ChosenLoyaltyCard" label="Input the number of the desired card" type="string" defaultValue="1" />
+        </camunda:formData>
+      </ns2:extensionElements>
+      <ns2:incoming>Flow_06ygbs3</ns2:incoming>
+      <ns2:outgoing>Flow_0qmxvrg</ns2:outgoing>
+    </ns2:userTask>
     <ns2:serviceTask id="Activity_0u8ysv3" name="Retrieve LoyaltyCards list">
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-146-207-196.compute-1.amazonaws.com:8082/Loyaltycard</camunda:inputParameter>
             <camunda:outputParameter name="CardsList">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
@@ -37,25 +62,12 @@
       <ns2:incoming>Flow_10cujk8</ns2:incoming>
       <ns2:outgoing>Flow_06ygbs3</ns2:outgoing>
     </ns2:serviceTask>
-    <ns2:userTask id="Activity_07gnlxw" name="Decide the type of  loyaltycard to lookup" camunda:assignee="demo">
-      <ns2:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="CardsList" label="The available cards are" type="string">
-            <camunda:properties />
-            <camunda:validation />
-          </camunda:formField>
-          <camunda:formField id="ChosenLoyaltyCard" label="Input the number of the desired card" type="string" />
-        </camunda:formData>
-      </ns2:extensionElements>
-      <ns2:incoming>Flow_06ygbs3</ns2:incoming>
-      <ns2:outgoing>Flow_0qmxvrg</ns2:outgoing>
-    </ns2:userTask>
     <ns2:serviceTask id="Activity_1ykd7ra" name="Get loyaltycard">
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-44-200-150-141.compute-1.amazonaws.com:8080/loyaltycard/${ChosenLoyaltyCard}</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-146-207-196.compute-1.amazonaws.com:8082/Loyaltycard/${ChosenLoyaltyCard}</camunda:inputParameter>
             <camunda:outputParameter name="LoyaltyCard">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
@@ -66,16 +78,19 @@
       <ns2:incoming>Flow_0qmxvrg</ns2:incoming>
       <ns2:outgoing>Flow_080r81e</ns2:outgoing>
     </ns2:serviceTask>
-    <ns2:startEvent id="Event_1khqtbt">
-      <ns2:outgoing>Flow_10cujk8</ns2:outgoing>
-    </ns2:startEvent>
-    <ns2:endEvent id="Event_0b5s53e">
+    <ns2:userTask id="Activity_1czx17n" name="Check loyaltycard" camunda:assignee="demo">
+      <ns2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="LoyaltyCard" label="The card is" type="string">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="iscorrect" label="iscorrect" type="boolean" />
+        </camunda:formData>
+      </ns2:extensionElements>
       <ns2:incoming>Flow_080r81e</ns2:incoming>
-    </ns2:endEvent>
-    <ns2:sequenceFlow id="Flow_10cujk8" sourceRef="Event_1khqtbt" targetRef="Activity_0u8ysv3" />
-    <ns2:sequenceFlow id="Flow_06ygbs3" sourceRef="Activity_0u8ysv3" targetRef="Activity_07gnlxw" />
-    <ns2:sequenceFlow id="Flow_0qmxvrg" sourceRef="Activity_07gnlxw" targetRef="Activity_1ykd7ra" />
-    <ns2:sequenceFlow id="Flow_080r81e" sourceRef="Activity_1ykd7ra" targetRef="Event_0b5s53e" />
+      <ns2:outgoing>Flow_060xg14</ns2:outgoing>
+    </ns2:userTask>
   </ns2:process>
   <ns4:BPMNDiagram id="diagram-DEMO2BPMN">
     <ns4:BPMNPlane id="plane-DEMO2BPMN" bpmnElement="coll-DEMO2BPMN">
@@ -87,42 +102,50 @@
         <ns5:Bounds x="185" y="85" width="850" height="290" />
         <ns4:BPMNLabel />
       </ns4:BPMNShape>
-      <ns4:BPMNShape id="BPMNShape_01elmg9" bpmnElement="Activity_0u8ysv3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <ns5:Bounds x="360" y="210" width="100" height="80" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="BPMNShape_12ox85r" bpmnElement="Activity_07gnlxw">
-        <ns5:Bounds x="555" y="210" width="100" height="80" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="BPMNShape_0alvps0" bpmnElement="Activity_1ykd7ra" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <ns5:Bounds x="725" y="210" width="100" height="80" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
       <ns4:BPMNShape id="BPMNShape_1iaddu8" bpmnElement="Event_1khqtbt">
         <ns5:Bounds x="237" y="232" width="36" height="36" />
       </ns4:BPMNShape>
       <ns4:BPMNShape id="BPMNShape_0jc2laj" bpmnElement="Event_0b5s53e">
-        <ns5:Bounds x="917" y="232" width="36" height="36" />
+        <ns5:Bounds x="942" y="232" width="36" height="36" />
         <ns4:BPMNLabel>
           <ns5:Bounds x="307" y="178" width="24" height="14" />
         </ns4:BPMNLabel>
       </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_12ox85r" bpmnElement="Activity_07gnlxw">
+        <ns5:Bounds x="490" y="210" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_01elmg9" bpmnElement="Activity_0u8ysv3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="330" y="210" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_0alvps0" bpmnElement="Activity_1ykd7ra" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="650" y="210" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_0zkfuzz" bpmnElement="Activity_1czx17n">
+        <ns5:Bounds x="800" y="210" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
       <ns4:BPMNEdge id="BPMNEdge_19low8j" bpmnElement="Flow_10cujk8">
         <ns3:waypoint x="273" y="250" />
-        <ns3:waypoint x="360" y="250" />
+        <ns3:waypoint x="330" y="250" />
       </ns4:BPMNEdge>
       <ns4:BPMNEdge id="BPMNEdge_0y3g8c0" bpmnElement="Flow_06ygbs3">
-        <ns3:waypoint x="460" y="250" />
-        <ns3:waypoint x="555" y="250" />
+        <ns3:waypoint x="430" y="250" />
+        <ns3:waypoint x="490" y="250" />
       </ns4:BPMNEdge>
       <ns4:BPMNEdge id="BPMNEdge_0c0fm4s" bpmnElement="Flow_0qmxvrg">
-        <ns3:waypoint x="655" y="250" />
-        <ns3:waypoint x="725" y="250" />
+        <ns3:waypoint x="590" y="250" />
+        <ns3:waypoint x="650" y="250" />
       </ns4:BPMNEdge>
       <ns4:BPMNEdge id="Flow_080r81e_di" bpmnElement="Flow_080r81e">
-        <ns3:waypoint x="825" y="250" />
-        <ns3:waypoint x="917" y="250" />
+        <ns3:waypoint x="750" y="250" />
+        <ns3:waypoint x="800" y="250" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="Flow_060xg14_di" bpmnElement="Flow_060xg14">
+        <ns3:waypoint x="900" y="250" />
+        <ns3:waypoint x="942" y="250" />
       </ns4:BPMNEdge>
     </ns4:BPMNPlane>
   </ns4:BPMNDiagram>

@@ -51,15 +51,8 @@
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2LoyaltyCardManagement/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-92-138-47.compute-1.amazonaws.com:8080/engine-rest/process-definition/key/BusinessActor2LoyaltyCardManagement/start</camunda:inputParameter>
             <camunda:inputParameter name="method">DELETE</camunda:inputParameter>
-            <camunda:inputParameter name="payload">{
-"businessKey":"${businessKey}",
-"variables": {
-"CustomerID": {"value":"${CustomerID}","type":"string"},
-"ShopID":{"value":"${ShopID}","type":"string"},
-"businessKeyRequester":{"value":"${businessKey}","type":"string"} 
-} }</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
@@ -82,7 +75,7 @@
 "resultEnabled" : true
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/message</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-92-138-47.compute-1.amazonaws.com:8080/engine-rest/message</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
@@ -100,7 +93,7 @@
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-54-91-227-182.compute-1.amazonaws.com:8080/Shop</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-146-207-196.compute-1.amazonaws.com:8082/Loyaltycard</camunda:inputParameter>
             <camunda:outputParameter name="CardsList">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
@@ -158,13 +151,8 @@
       <ns2:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="payload">{
-"messageName" : "Message_1qktfb5",
-"businessKey" : "${businessKeyRequester}",
-"resultEnabled" : true
-}</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/message</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-92-138-47.compute-1.amazonaws.com:8080/engine-rest/message</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
@@ -225,7 +213,7 @@
 "resultEnabled" : true
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/message</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-92-138-47.compute-1.amazonaws.com:8080/engine-rest/message</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
@@ -249,71 +237,6 @@
   <ns2:message id="Message_1qktfb5" name="Message_1qktfb5" />
   <ns4:BPMNDiagram id="diagram-DEMO2BPMN">
     <ns4:BPMNPlane id="plane-DEMO2BPMN" bpmnElement="coll-DEMO2BPMN">
-      <ns4:BPMNShape id="Participant_76df3ca7-833d-4742-b903-00df33f6cedf_di" bpmnElement="Participant_76df3ca7-833d-4742-b903-00df33f6cedf" isHorizontal="true">
-        <ns5:Bounds x="160" y="270" width="1260" height="170" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="Lane_0ef45123-e62a-43d1-ae41-47ab2a18856c_di" bpmnElement="Lane_0ef45123-e62a-43d1-ae41-47ab2a18856c" isHorizontal="true">
-        <ns5:Bounds x="190" y="270" width="1230" height="170" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="Event_c61bca2b-2c96-4163-9b8a-72b56b853f50_di" bpmnElement="Event_c61bca2b-2c96-4163-9b8a-72b56b853f50">
-        <ns5:Bounds x="1335" y="332" width="36" height="36" />
-        <ns4:BPMNLabel>
-          <ns5:Bounds x="1503" y="373" width="24" height="14" />
-        </ns4:BPMNLabel>
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="Event_ae6cefc1-5f4e-4807-9900-6da813149481_di" bpmnElement="Event_ae6cefc1-5f4e-4807-9900-6da813149481">
-        <ns5:Bounds x="312" y="332" width="36" height="36" />
-        <ns4:BPMNLabel>
-          <ns5:Bounds x="287" y="375" width="86" height="14" />
-        </ns4:BPMNLabel>
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="BPMNShape_0cqwl9v" bpmnElement="Activity_00xj0tw" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <ns5:Bounds x="954" y="310" width="100" height="80" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="BPMNShape_07ih1o6" bpmnElement="Activity_0ae7711" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <ns5:Bounds x="760" y="310" width="100" height="80" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="Event_d3b56817-2356-4a8d-92c3-2ba732773389_di" bpmnElement="Event_d3b56817-2356-4a8d-92c3-2ba732773389">
-        <ns5:Bounds x="1232" y="332" width="36" height="36" />
-        <ns4:BPMNLabel>
-          <ns5:Bounds x="1211" y="368" width="79" height="14" />
-        </ns4:BPMNLabel>
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="Activity_1v3ndzs_di" bpmnElement="Activity_9a1f746e-fa58-4118-9e43-d8ae475999d1">
-        <ns5:Bounds x="410" y="310" width="100" height="80" />
-      </ns4:BPMNShape>
-      <ns4:BPMNShape id="BPMNShape_0xe9qs8" bpmnElement="Activity_18rp91s" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <ns5:Bounds x="580" y="310" width="100" height="80" />
-        <ns4:BPMNLabel />
-      </ns4:BPMNShape>
-      <ns4:BPMNEdge id="Edge_88115421-93e7-4dbb-a762-da807db80a93" bpmnElement="Flow_28fd99be-3edf-4e83-9cc6-0111bc7a9625">
-        <ns3:waypoint x="1054" y="350" />
-        <ns3:waypoint x="1232" y="350" />
-      </ns4:BPMNEdge>
-      <ns4:BPMNEdge id="Edge_51da6cc1-53b1-4179-bf15-7cb1bcfc45ef" bpmnElement="Flow_b3b03f8d-3dac-4737-a9cb-1b523dc44000">
-        <ns3:waypoint x="1268" y="350" />
-        <ns3:waypoint x="1335" y="350" />
-      </ns4:BPMNEdge>
-      <ns4:BPMNEdge id="Edge_c0e58f46-aa3c-4f4c-bc90-1c56276b9db8" bpmnElement="Flow_0bedca68-f247-45d9-8839-64b1fef427e8">
-        <ns3:waypoint x="348" y="350" />
-        <ns3:waypoint x="410" y="350" />
-      </ns4:BPMNEdge>
-      <ns4:BPMNEdge id="Edge_8b1f605a-ee70-4731-add9-7768fac85f12" bpmnElement="Flow_5e2bfceb-89ea-4f84-b5c6-5b6617d5966f">
-        <ns3:waypoint x="510" y="350" />
-        <ns3:waypoint x="580" y="350" />
-      </ns4:BPMNEdge>
-      <ns4:BPMNEdge id="Edge_382beea7-aaaa-4245-8ee8-6f41d5bb1b36" bpmnElement="Flow_b99ea1eb-9f3c-45d4-9361-d7f23611c1c1">
-        <ns3:waypoint x="680" y="350" />
-        <ns3:waypoint x="760" y="350" />
-      </ns4:BPMNEdge>
-      <ns4:BPMNEdge id="Flow_0m094up_di" bpmnElement="Flow_0m094up">
-        <ns3:waypoint x="860" y="350" />
-        <ns3:waypoint x="954" y="350" />
-      </ns4:BPMNEdge>
       <ns4:BPMNShape id="Participant_35abdb70-ab23-431b-aaae-244b9137cf46_di" bpmnElement="Participant_35abdb70-ab23-431b-aaae-244b9137cf46" isHorizontal="true">
         <ns5:Bounds x="160" y="40" width="1260" height="160" />
         <ns4:BPMNLabel />
@@ -393,6 +316,71 @@
       <ns4:BPMNEdge id="Flow_0mo12qz_di" bpmnElement="Flow_0mo12qz">
         <ns3:waypoint x="419" y="120" />
         <ns3:waypoint x="510" y="120" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNShape id="Participant_76df3ca7-833d-4742-b903-00df33f6cedf_di" bpmnElement="Participant_76df3ca7-833d-4742-b903-00df33f6cedf" isHorizontal="true">
+        <ns5:Bounds x="160" y="270" width="1260" height="170" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="Lane_0ef45123-e62a-43d1-ae41-47ab2a18856c_di" bpmnElement="Lane_0ef45123-e62a-43d1-ae41-47ab2a18856c" isHorizontal="true">
+        <ns5:Bounds x="190" y="270" width="1230" height="170" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="Event_c61bca2b-2c96-4163-9b8a-72b56b853f50_di" bpmnElement="Event_c61bca2b-2c96-4163-9b8a-72b56b853f50">
+        <ns5:Bounds x="1335" y="332" width="36" height="36" />
+        <ns4:BPMNLabel>
+          <ns5:Bounds x="1503" y="373" width="24" height="14" />
+        </ns4:BPMNLabel>
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="Event_ae6cefc1-5f4e-4807-9900-6da813149481_di" bpmnElement="Event_ae6cefc1-5f4e-4807-9900-6da813149481">
+        <ns5:Bounds x="312" y="332" width="36" height="36" />
+        <ns4:BPMNLabel>
+          <ns5:Bounds x="287" y="375" width="86" height="14" />
+        </ns4:BPMNLabel>
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_0cqwl9v" bpmnElement="Activity_00xj0tw" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="954" y="310" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_07ih1o6" bpmnElement="Activity_0ae7711" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="760" y="310" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="Event_d3b56817-2356-4a8d-92c3-2ba732773389_di" bpmnElement="Event_d3b56817-2356-4a8d-92c3-2ba732773389">
+        <ns5:Bounds x="1232" y="332" width="36" height="36" />
+        <ns4:BPMNLabel>
+          <ns5:Bounds x="1211" y="368" width="79" height="14" />
+        </ns4:BPMNLabel>
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="Activity_1v3ndzs_di" bpmnElement="Activity_9a1f746e-fa58-4118-9e43-d8ae475999d1">
+        <ns5:Bounds x="410" y="310" width="100" height="80" />
+      </ns4:BPMNShape>
+      <ns4:BPMNShape id="BPMNShape_0xe9qs8" bpmnElement="Activity_18rp91s" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <ns5:Bounds x="580" y="310" width="100" height="80" />
+        <ns4:BPMNLabel />
+      </ns4:BPMNShape>
+      <ns4:BPMNEdge id="Edge_88115421-93e7-4dbb-a762-da807db80a93" bpmnElement="Flow_28fd99be-3edf-4e83-9cc6-0111bc7a9625">
+        <ns3:waypoint x="1054" y="350" />
+        <ns3:waypoint x="1232" y="350" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="Edge_51da6cc1-53b1-4179-bf15-7cb1bcfc45ef" bpmnElement="Flow_b3b03f8d-3dac-4737-a9cb-1b523dc44000">
+        <ns3:waypoint x="1268" y="350" />
+        <ns3:waypoint x="1335" y="350" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="Edge_c0e58f46-aa3c-4f4c-bc90-1c56276b9db8" bpmnElement="Flow_0bedca68-f247-45d9-8839-64b1fef427e8">
+        <ns3:waypoint x="348" y="350" />
+        <ns3:waypoint x="410" y="350" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="Edge_8b1f605a-ee70-4731-add9-7768fac85f12" bpmnElement="Flow_5e2bfceb-89ea-4f84-b5c6-5b6617d5966f">
+        <ns3:waypoint x="510" y="350" />
+        <ns3:waypoint x="580" y="350" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="Edge_382beea7-aaaa-4245-8ee8-6f41d5bb1b36" bpmnElement="Flow_b99ea1eb-9f3c-45d4-9361-d7f23611c1c1">
+        <ns3:waypoint x="680" y="350" />
+        <ns3:waypoint x="760" y="350" />
+      </ns4:BPMNEdge>
+      <ns4:BPMNEdge id="Flow_0m094up_di" bpmnElement="Flow_0m094up">
+        <ns3:waypoint x="860" y="350" />
+        <ns3:waypoint x="954" y="350" />
       </ns4:BPMNEdge>
       <ns4:BPMNEdge id="MessageFlow_cbea70d9-e9d1-4f59-aaba-33b2f9c4e1d9_di" bpmnElement="MessageFlow_cbea70d9-e9d1-4f59-aaba-33b2f9c4e1d9">
         <ns3:waypoint x="790" y="160" />

@@ -6,7 +6,7 @@
     <bpmn:messageFlow id="Flow_04vr1zy" sourceRef="Activity_0114ffd8-a98c-4bb9-939c-ebe65dd45cea" targetRef="Event_2e52d0f6-d71e-4f32-a59e-8f1adf71ced3" />
     <bpmn:messageFlow id="Flow_0dku7ss" sourceRef="Activity_04wyitf" targetRef="Event_4c9998a8-f845-4916-bd06-69f9621f6399" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_0h6y1ci" isExecutable="true">
+  <bpmn:process id="Process_0h6y1ci" isExecutable="true" camunda:historyTimeToLive="7">
     <bpmn:laneSet id="LaneSet_0joqbkf">
       <bpmn:lane id="Lane_c194296b-9ffd-41e8-b853-2e9413ed2741" name="Initiator TK01">
         <bpmn:flowNodeRef>Event_4c9998a8-f845-4916-bd06-69f9621f6399</bpmn:flowNodeRef>
@@ -69,17 +69,9 @@
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/process-definition/key/BusinessActor2CustomerManagement/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-146-207-196.compute-1.amazonaws.com:8081/Shop</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="payload">{
-"variables": {
-"FiscalNumber": {"value":"${FiscalNumber}","type":"string"},
-"LocationAddress":{"value":"${LocationAddress}","type":"string"},
-"LocationPostalCode": {"value":"${LocationPostalCode}","type":"string"} ,
-"Name":{"value":"${Name}","type":"string"}
-},
-"resultEnabled" : true
- }</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{${ChosenShop}}</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
@@ -114,7 +106,7 @@
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-44-200-150-141.compute-1.amazonaws.com:8080/fruits</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-146-207-196.compute-1.amazonaws.com:8081/Shop</camunda:inputParameter>
             <camunda:outputParameter name="ShopsList">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
@@ -145,37 +137,13 @@
   <bpmn:process id="BusinessActor2CustomerManagement" name="BusinessActor2CustomerManagement" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:laneSet id="LaneSet_1xhmgjs">
       <bpmn:lane id="Lane_85f9ec89-2e4a-4fbc-ab68-2c4f2a6dd3a7" name="Executor TK01">
-        <bpmn:flowNodeRef>Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_2e52d0f6-d71e-4f32-a59e-8f1adf71ced3</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_04wyitf</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_89b4f19c-448a-4257-9b5f-0fcb6b027708</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1czx17n</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:serviceTask id="Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372" name="Lookup Shop">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="payload">{
-  "FiscalNumber": "${FiscalNumber}",
-  "id": 0,
-  "location": "${LocationAddress}",
-  "name": "${Name}"
-}</camunda:inputParameter>
-            <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-44-200-150-141.compute-1.amazonaws.com:8080/customer/${ChosenShop}</camunda:inputParameter>
-            <camunda:inputParameter name="headers">
-              <camunda:map>
-                <camunda:entry key="accept">application/json</camunda:entry>
-                <camunda:entry key="Content-Type">application/json</camunda:entry>
-              </camunda:map>
-            </camunda:inputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1hulnxp</bpmn:incoming>
-      <bpmn:outgoing>Flow_1nfguxo</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:startEvent id="Event_2e52d0f6-d71e-4f32-a59e-8f1adf71ced3" name="Request received">
       <bpmn:outgoing>Flow_1hulnxp</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_13bfpbb" messageRef="Message_05o1brq" />
@@ -189,7 +157,7 @@
 "resultEnabled" : true
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://localhost:8080/engine-rest/message</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-146-207-196.compute-1.amazonaws.com:8081/Shop</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
@@ -199,15 +167,45 @@
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1nfguxo</bpmn:incoming>
+      <bpmn:incoming>Flow_0rvhpo2</bpmn:incoming>
       <bpmn:outgoing>Flow_1ncy5w2</bpmn:outgoing>
     </bpmn:sendTask>
     <bpmn:endEvent id="Event_89b4f19c-448a-4257-9b5f-0fcb6b027708">
       <bpmn:incoming>Flow_1ncy5w2</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1hulnxp" sourceRef="Event_2e52d0f6-d71e-4f32-a59e-8f1adf71ced3" targetRef="Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372" />
-    <bpmn:sequenceFlow id="Flow_1nfguxo" sourceRef="Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372" targetRef="Activity_04wyitf" />
+    <bpmn:sequenceFlow id="Flow_1nfguxo" sourceRef="Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372" targetRef="Activity_1czx17n" />
     <bpmn:sequenceFlow id="Flow_1ncy5w2" sourceRef="Activity_04wyitf" targetRef="Event_89b4f19c-448a-4257-9b5f-0fcb6b027708" />
+    <bpmn:sequenceFlow id="Flow_0rvhpo2" sourceRef="Activity_1czx17n" targetRef="Activity_04wyitf" />
+    <bpmn:userTask id="Activity_1czx17n" name="Check shop" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Shop" label="The card is" type="string">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="iscorrect" label="iscorrect" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nfguxo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rvhpo2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372" name="Lookup Shop">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-146-207-196.compute-1.amazonaws.com:8081/Shop/${ChosenShop}</camunda:inputParameter>
+            <camunda:outputParameter name="Shop">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hulnxp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nfguxo</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_077wz6h">
@@ -339,10 +337,6 @@
       <bpmndi:BPMNShape id="BPMNShape_060xjgp" bpmnElement="Lane_85f9ec89-2e4a-4fbc-ab68-2c4f2a6dd3a7" isHorizontal="true">
         <dc:Bounds x="160" y="430" width="1020" height="228" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1eejho9" bpmnElement="Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="530" y="498" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0y3s9gq" bpmnElement="Event_2e52d0f6-d71e-4f32-a59e-8f1adf71ced3">
         <dc:Bounds x="247" y="520" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -359,17 +353,29 @@
           <dc:Bounds x="1662" y="1228" width="24" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zkfuzz" bpmnElement="Activity_1czx17n">
+        <dc:Bounds x="710" y="498" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1eejho9" bpmnElement="Activity_8a65cc5c-3044-4a2b-a08e-58c41cc97372" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="470" y="498" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1mesj3j" bpmnElement="Flow_1hulnxp">
         <di:waypoint x="283" y="538" />
-        <di:waypoint x="530" y="538" />
+        <di:waypoint x="470" y="538" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1iu7ys2" bpmnElement="Flow_1nfguxo">
-        <di:waypoint x="630" y="538" />
-        <di:waypoint x="930" y="538" />
+        <di:waypoint x="570" y="538" />
+        <di:waypoint x="710" y="538" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ncy5w2_di" bpmnElement="Flow_1ncy5w2">
         <di:waypoint x="1030" y="538" />
         <di:waypoint x="1102" y="538" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rvhpo2_di" bpmnElement="Flow_0rvhpo2">
+        <di:waypoint x="810" y="538" />
+        <di:waypoint x="930" y="538" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04vr1zy_di" bpmnElement="Flow_04vr1zy">
         <di:waypoint x="649" y="185" />
