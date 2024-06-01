@@ -53,15 +53,14 @@
       <bpmn:outgoing>Flow_526b855b-46e9-483a-be11-c627cbb22ed7</bpmn:outgoing>
       <bpmn:outgoing>Flow_5908c54d-db84-4c94-9acc-14a024747c28</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Activity_0g5fgdj" name="Decide the data to customer update" camunda:assignee="demo">
+    <bpmn:userTask id="Activity_0g5fgdj" name="Decide the data to shop update" camunda:assignee="demo">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="CustomersList" label="The available shops are" type="string">
+          <camunda:formField id="ShopsList" label="The available shops are" type="string">
             <camunda:properties />
             <camunda:validation />
           </camunda:formField>
-          <camunda:formField id="ChosenCustomer" label="Input the number of the desired customer" type="string" />
-          <camunda:formField id="FiscalNumber" label="Input the number " type="string" />
+          <camunda:formField id="ChosenShop" label="Input the number of the desired shop" type="string" />
           <camunda:formField id="Location" label="Input the location" type="string" />
           <camunda:formField id="Name" label="Input the name" type="string" />
         </camunda:formData>
@@ -70,7 +69,7 @@
       <bpmn:incoming>Flow_bd8a239c-a8f2-4cf5-86ad-f8abb3ab9c6a</bpmn:incoming>
       <bpmn:outgoing>Flow_1hb3k2f</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Activity_ceb77bc3-e3d1-4e4b-8b31-1e7ffc776389" name="Verify if update customer is possible" camunda:assignee="demo">
+    <bpmn:userTask id="Activity_ceb77bc3-e3d1-4e4b-8b31-1e7ffc776389" name="Verify if update shop is possible" camunda:assignee="demo">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="promise" label="Is it possible to Promise?" type="boolean" defaultValue="true" />
@@ -88,15 +87,15 @@
       <bpmn:outgoing>Flow_0a2987f6-9bf1-4bb7-a20a-cd41f54e8962</bpmn:outgoing>
       <bpmn:outgoing>Flow_bd8a239c-a8f2-4cf5-86ad-f8abb3ab9c6a</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:task id="Activity_439f605b-045a-4af7-bb6d-02f247035232" name="Decline customer update order">
+    <bpmn:task id="Activity_439f605b-045a-4af7-bb6d-02f247035232" name="Decline shop update order">
       <bpmn:incoming>Flow_5908c54d-db84-4c94-9acc-14a024747c28</bpmn:incoming>
       <bpmn:outgoing>Flow_052a4c83-a9c0-4b0a-9bfb-2fd31849d2fa</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:serviceTask id="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" name="Update Customer">
+    <bpmn:serviceTask id="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" name="Update Shop">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://ec2-54-147-153-62.compute-1.amazonaws.com:8080/Customer/${ChosenCustomer}/${Name}/${FiscalNumber}/${Location}</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-147-153-62.compute-1.amazonaws.com:8081/Shop/${ChosenShop}/${Name}/${Location}</camunda:inputParameter>
             <camunda:inputParameter name="method">PUT</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -111,17 +110,17 @@
       <bpmn:incoming>Flow_526b855b-46e9-483a-be11-c627cbb22ed7</bpmn:incoming>
       <bpmn:outgoing>Flow_0r54mcw</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:task id="Activity_1dp88h4" name="Declare customer update">
+    <bpmn:task id="Activity_1dp88h4" name="Declare shop update">
       <bpmn:incoming>Flow_0r54mcw</bpmn:incoming>
       <bpmn:outgoing>Flow_0vt4amu</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:serviceTask id="Activity_1upge7h" name="Retrieve customer catalog">
+    <bpmn:serviceTask id="Activity_1upge7h" name="Retrieve shop catalog">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-54-147-153-62.compute-1.amazonaws.com:8080/Customer</camunda:inputParameter>
-            <camunda:outputParameter name="CustomersList">
+            <camunda:inputParameter name="url">http://ec2-54-147-153-62.compute-1.amazonaws.com:8081/Shop</camunda:inputParameter>
+            <camunda:outputParameter name="ShopsList">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
@@ -131,11 +130,11 @@
       <bpmn:incoming>Flow_0vt4amu</bpmn:incoming>
       <bpmn:outgoing>Flow_01c6nsl</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Activity_217bab8c-a15d-49a8-9f0b-3fc379dacdac" name="Check customer update" camunda:assignee="demo">
+    <bpmn:userTask id="Activity_217bab8c-a15d-49a8-9f0b-3fc379dacdac" name="Check shop update" camunda:assignee="demo">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="customerdeleted" label="The customer is updated?" type="boolean" defaultValue="true" />
-          <camunda:formField id="CustomersList" label="The available customers are" type="string" />
+          <camunda:formField id="shopdeleted" label="The shop is updated?" type="boolean" defaultValue="true" />
+          <camunda:formField id="ShopsList" label="The available shops are" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01c6nsl</bpmn:incoming>
@@ -144,13 +143,13 @@
     <bpmn:endEvent id="Event_68ebb72b-b1b2-4c34-979e-1b55d3b308ea">
       <bpmn:incoming>Flow_0wu1j2g</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_1y7hoeb" name="Retrieve customer catalog">
+    <bpmn:serviceTask id="Activity_1y7hoeb" name="Retrieve shop catalog">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-54-147-153-62.compute-1.amazonaws.com:8080/Customer</camunda:inputParameter>
-            <camunda:outputParameter name="CustomersList">
+            <camunda:inputParameter name="url">http://ec2-54-147-153-62.compute-1.amazonaws.com:8081/Shop</camunda:inputParameter>
+            <camunda:outputParameter name="ShopsList">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
           </camunda:inputOutput>
