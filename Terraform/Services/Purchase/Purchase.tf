@@ -65,6 +65,6 @@ resource "aws_security_group" "instance" {
   }
 }
 
-output "purchase_dns" {
+output "public_dns" {
   value = aws_instance.purchase.public_dns
 }

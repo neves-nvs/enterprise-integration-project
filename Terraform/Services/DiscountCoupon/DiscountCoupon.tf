@@ -66,7 +66,7 @@ resource "aws_security_group" "instance" {
   }
 }
 
-output "discountcoupon_dns" {
+output "public_dns" {
   value = aws_instance.discountcoupon.public_dns
 }
 

@@ -94,3 +94,19 @@ module "selled-product" {
 output "customer-shop-loyaltycard-public_dns" {
   value = module.customer-shop-loyaltycard.public_dns
 }
+
+output "purchase-public_dns" {
+  value = module.purchase.public_dns
+}
+
+output "discountcoupon-public_dns" {
+  value = module.discount-coupon.public_dns
+}
+
+output "cross-selling-recommendation-public_dns" {
+  value = module.cross-selling-recommendation.public_dns
+}
+
+output "selled-product-public_dns" {
+  value = module.selled-product.public_dns
+}

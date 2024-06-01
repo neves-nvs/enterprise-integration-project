@@ -66,6 +66,6 @@ resource "aws_security_group" "instance" {
   }
 }
 
-output "selledproduct_dns" {
+output "public_dns" {
   value = aws_instance.selledproduct.public_dns
 }

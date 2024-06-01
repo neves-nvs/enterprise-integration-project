@@ -65,6 +65,6 @@ resource "aws_security_group" "instance" {
   }
 }
 
-output "crosssellingrecommendation_dns" {
+output "public_dns" {
   value = aws_instance.crosssellingrecommendation.public_dns
 }

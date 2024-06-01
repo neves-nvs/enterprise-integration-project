@@ -1,4 +1,4 @@
-resource "aws_instance" "exampleInstallKong" {
+resource "aws_instance" "kong-konga" {
   ami                    = "ami-0b5eea76982371e91"
   instance_type          = "t2.small"
   vpc_security_group_ids = [aws_security_group.instance.id]
@@ -9,7 +9,7 @@ resource "aws_instance" "exampleInstallKong" {
   user_data_replace_on_change = true
 
   tags = {
-    Name = "terraform-kong"
+    Name = "terraform-kong-konga"
   }
 }
 
@@ -37,9 +37,8 @@ variable "security_group_name" {
   default     = "terraform-kong-instance5"
 }
 
-output "address" {
-  value       = aws_instance.exampleInstallKong.public_dns
-  description = "Connect to the KONG at this endpoint"
+output "public_dns" {
+  value = aws_instance.kong-konga.public_dns
 }
 
 

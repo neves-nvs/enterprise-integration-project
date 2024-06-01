@@ -1,3 +1,7 @@
+/* -------------------------------------------------------------------------- */
+/*                                    Main                                    */
+/* -------------------------------------------------------------------------- */
+
 terraform {
   required_version = ">= 1.0.0, < 2.0.0"
 
@@ -13,6 +17,10 @@ provider "aws" {
   region = "us-east-1"
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                  Variables                                 */
+/* -------------------------------------------------------------------------- */
+
 variable "dockerhub_user" {
   description = "The username of the DockerHub account"
   type        = string
@@ -22,6 +30,10 @@ variable "key_name" {
   description = "The name of the key pair"
   type        = string
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                    Data                                    */
+/* -------------------------------------------------------------------------- */
 
 module "relational_database" {
   source = "./RDS"
@@ -37,12 +49,14 @@ resource "null_resource" "check_kafka_cluster" {
   triggers = {
     kafka_broker_url = module.kafka.kafka_broker_url
   }
-
   provisioner "local-exec" {
     command = "${path.module}/check_kafka.sh ${self.triggers.kafka_broker_url}"
   }
-
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Services                                  */
+/* -------------------------------------------------------------------------- */
 
 module "services" {
   depends_on = [
@@ -55,9 +69,22 @@ module "services" {
   dockerhub_user   = var.dockerhub_user
   key_name         = var.key_name
 }
-output "customer-shop-loyaltycard-public_dns" {
+
+output "customer_shop_loyaltycard_public_dns" {
   value = module.services.customer-shop-loyaltycard-public_dns
 }
+
+output "discountcoupon_public_dns" {
+  value = module.services.discountcoupon-public_dns
+}
+
+output "purchase_public_dns" {
+  value = module.services.purchase-public_dns
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Business Process                              */
+/* -------------------------------------------------------------------------- */
 
 module "camunda" {
   source = "./Camunda"
@@ -70,3 +97,6 @@ module "kong" {
   source = "./Kong"
 }
 
+output "kong" {
+  value = module.kong.public_dns
+}
