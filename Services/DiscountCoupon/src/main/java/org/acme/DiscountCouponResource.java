@@ -3,6 +3,8 @@ package org.acme;
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -10,8 +12,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import java.net.URI;
-
-import org.acme.DiscountCoupon.DiscountType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -95,4 +95,12 @@ public class DiscountCouponResource {
 				.onItem().transform(status -> Response.status(status).build());
 	}
 
+	@POST
+	@Path("/generate")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Multi<DiscountCoupon> generate(JsonObject purchasesCustomers) {
+		JsonArray purchases = purchasesCustomers.getJsonArray("purchases");
+		JsonArray customers = purchasesCustomers.getJsonArray("customers");
+		return DiscountCoupon.generate(client, purchases, customers);
+	}
 }

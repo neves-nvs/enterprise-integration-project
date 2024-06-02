@@ -1,15 +1,12 @@
 package org.acme;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.inject.Inject;
-
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.DeleteTopicsResult;
@@ -17,6 +14,10 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.TopicExistsException;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 public class DynamicKafkaProducer {
 
@@ -144,4 +145,33 @@ public class DynamicKafkaProducer {
         return ("New Topic deleted = " + topic);
     }
 
+    public Map<String, Long> countAllTopics() {
+        Properties properties = new Properties();
+        properties.put("bootstrap.servers", kafkaServers);
+        properties.put("group.id", "my-group");
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
+        List<String> topics = Arrays.asList(TOPIC_BY_DISCOUNTCOUPON, TOPIC_BY_CUSTOMER, TOPIC_BY_LOCATION,
+                TOPIC_BY_LOYALTYCARD, TOPIC_BY_SHOP);
+
+        Map<String, Long> topicRecordCountMap = new HashMap<>();
+        topicRecordCountMap.put(TOPIC_BY_DISCOUNTCOUPON, 0L);
+        topicRecordCountMap.put(TOPIC_BY_CUSTOMER, 0L);
+        topicRecordCountMap.put(TOPIC_BY_LOCATION, 0L);
+        topicRecordCountMap.put(TOPIC_BY_LOYALTYCARD, 0L);
+        topicRecordCountMap.put(TOPIC_BY_SHOP, 0L);
+
+        for (String topic : topics) {
+            consumer.subscribe(Collections.singletonList(topic));
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE));
+            topicRecordCountMap.put(topic, (long) records.count());
+            consumer.unsubscribe();
+        }
+
+        consumer.close();
+
+        return topicRecordCountMap;
+    }
 }

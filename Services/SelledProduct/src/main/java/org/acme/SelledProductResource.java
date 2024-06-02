@@ -1,6 +1,8 @@
 package org.acme;
 
 import java.net.URI;
+import java.util.Map;
+
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -105,6 +107,15 @@ public class SelledProductResource {
 				.update(client, id, idPurchase, idDiscountCoupon, idCustomer, location, idLoyaltyCard, idShop)
 				.onItem().transform(updated -> updated ? Response.Status.NO_CONTENT : Response.Status.NOT_FOUND)
 				.onItem().transform(status -> Response.status(status).build());
+	}
+
+	@GET
+	@Path("/Analytics")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<String, Long> analytics() {
+		DynamicKafkaProducer producer = new DynamicKafkaProducer(kafkaServers);
+		Map<String, Long> analytics = producer.countAllTopics();
+		return analytics;
 	}
 
 }

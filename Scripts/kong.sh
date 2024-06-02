@@ -471,7 +471,7 @@ manage_entity() {
         echo "[c] Create"
         echo "[t] Test"
         echo "[b] Go back"
-        read -p "Select an option: " action
+        read -r -p "Select an option: " action
 
         case $action in
         c)

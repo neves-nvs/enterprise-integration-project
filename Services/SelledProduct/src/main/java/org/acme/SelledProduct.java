@@ -95,4 +95,5 @@ public class SelledProduct {
 						.tuple(List.of(idPurchase, idDiscountCoupon, idCustomer, location, idLoyaltyCard, idShop, id)))
 				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
 	}
+
 }

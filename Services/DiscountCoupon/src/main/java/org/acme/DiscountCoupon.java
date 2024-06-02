@@ -1,17 +1,19 @@
 package org.acme;
 
-import java.io.StringReader;
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
-import jakarta.json.Json;
 
 public class DiscountCoupon {
 
@@ -92,6 +94,61 @@ public class DiscountCoupon {
 				"UPDATE DiscountCoupons SET loyaltyCardId = ?, discountType = ?, expiryDate = ? WHERE id = ?")
 				.execute(Tuple.of(idLoyaltyCard_R, discountType_R, expiryDate_R, id))
 				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
+	}
 
+	public static Multi<DiscountCoupon> generate(MySQLPool client) {
+		return client.query("SELECT id, loyaltyCardId, discountType, expiryDate FROM DiscountCoupons ORDER BY id ASC")
+				.execute()
+				.onItem().transformToMulti(set -> Multi.createFrom().iterable(set))
+				.onItem().transform(DiscountCoupon::from)
+				.onItem().transformToUniAndConcatenate(discountCoupon -> {
+					if (discountCoupon.expiryDate.isBefore(LocalDateTime.now())) {
+						return client.preparedQuery("DELETE FROM DiscountCoupons WHERE id = ?")
+								.execute(Tuple.of(discountCoupon.id))
+								.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1)
+								.onItem().transform(deleted -> deleted ? discountCoupon : null);
+					}
+					return Uni.createFrom().item(discountCoupon);
+				});
+	}
+
+	public static Multi<DiscountCoupon> generate(MySQLPool client, JsonArray purchases, JsonArray customers) {
+		List<JsonObject> jsonObjectList = new ArrayList<>();
+		List<JsonObject> jsonObjectListCustomers = new ArrayList<>();
+		purchases.forEach(purchase -> jsonObjectList.add((JsonObject) purchase));
+		customers.forEach(customer -> jsonObjectListCustomers.add((JsonObject) customer));
+
+		List<DiscountCoupon> discountCoupons = new ArrayList<>();
+		for (JsonObject purchase : jsonObjectList) {
+			String shopName = purchase.getString("shop_name");
+			Long loyaltyCardId = purchase.getLong("loyaltyCard_id");
+
+			boolean hasPurchase = jsonObjectList.stream()
+					.anyMatch(p -> p.getString("shop_name").equals(shopName));
+
+			DiscountCoupon discountCoupon = new DiscountCoupon(null, loyaltyCardId, DiscountType.AMOUNT_OFF,
+					LocalDateTime.now().plus(1, ChronoUnit.WEEKS));
+			discountCoupons.add(discountCoupon);
+
+			if (!hasPurchase) {
+				DiscountCoupon discountCouponWithoutPurchase = new DiscountCoupon(null, loyaltyCardId,
+						DiscountType.PERCENTAGE_OFF, LocalDateTime.now().plus(1, ChronoUnit.WEEKS));
+				discountCoupons.add(discountCouponWithoutPurchase);
+			}
+		}
+
+		List<Tuple> batch = discountCoupons.stream()
+				.map(discountCoupon -> Tuple.of(discountCoupon.idLoyaltyCard, discountCoupon.discountType.ordinal(),
+						discountCoupon.expiryDate))
+				.collect(Collectors.toList());
+
+		Uni<Multi<DiscountCoupon>> uni = client
+				.preparedQuery(
+						"INSERT INTO DiscountCoupons (loyaltyCardId, discountType, expiryDate) VALUES (?, ?, ?)")
+				.executeBatch(batch)
+				.onItem().ignore().andContinueWithNull()
+				.replaceWith(Multi.createFrom().iterable(discountCoupons));
+
+		return uni.onItem().transformToMulti(u -> Multi.createFrom().items(discountCoupons.stream()));
 	}
 }

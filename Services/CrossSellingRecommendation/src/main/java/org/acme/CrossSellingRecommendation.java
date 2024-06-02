@@ -1,9 +1,15 @@
 package org.acme;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.mutiny.mysqlclient.MySQLPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
@@ -21,6 +27,12 @@ public class CrossSellingRecommendation {
 	public CrossSellingRecommendation(Long id, Long idLoyaltyCard) {
 		this.id = id;
 		this.idLoyaltyCard = idLoyaltyCard;
+	}
+
+	public CrossSellingRecommendation(Long id, Long idLoyaltyCard, LocalDateTime expiryDate) {
+		this.id = id;
+		this.idLoyaltyCard = idLoyaltyCard;
+		this.expiryDate = expiryDate;
 	}
 
 	@Override
@@ -62,6 +74,57 @@ public class CrossSellingRecommendation {
 				"UPDATE CrossSellingRecommendations SET LoyaltyCardId = ? WHERE id = ?")
 				.execute(Tuple.of(idLoyaltyCard_R, id))
 				.onItem().transform(pgRowSet -> pgRowSet.rowCount() == 1);
+	}
 
+	// Format
+	// [
+	// {
+	// "id": 0,
+	// "timestamp": "2022-03-10T12:15:50",
+	// "price": 0,
+	// "product": "string",
+	// "supplier": "string",
+	// "shop_name": "string",
+	// "loyaltyCard_id": 0
+	// }
+	// ]
+	public static Multi<CrossSellingRecommendation> generate(MySQLPool client, JsonArray purchases) {
+		// Convert JsonArray to List<JsonObject>
+		List<JsonObject> jsonObjectList = new ArrayList<>();
+		for (int i = 0; i < purchases.size(); i++) {
+			jsonObjectList.add(purchases.getJsonObject(i));
+		}
+
+		// Prepare recommendations
+		List<CrossSellingRecommendation> recommendations = new ArrayList<>();
+		for (JsonObject purchase : jsonObjectList) {
+			String shopName = purchase.getString("shop_name");
+			Long loyaltyCardId = purchase.getLong("loyaltyCard_id");
+
+			boolean hasPurchase = jsonObjectList.stream()
+					.anyMatch(p -> p.getString("shop_name").equals(shopName));
+
+			CrossSellingRecommendation recommendation = new CrossSellingRecommendation(null, loyaltyCardId,
+					LocalDateTime.now().plus(1, ChronoUnit.WEEKS));
+			recommendations.add(recommendation);
+
+			if (!hasPurchase) {
+				CrossSellingRecommendation recommendationWithoutPurchase = new CrossSellingRecommendation(null,
+						loyaltyCardId);
+				recommendations.add(recommendationWithoutPurchase);
+			}
+		}
+
+		List<Tuple> batch = recommendations.stream()
+				.map(recommendation -> Tuple.of(recommendation.idLoyaltyCard))
+				.collect(Collectors.toList());
+
+		Uni<Multi<CrossSellingRecommendation>> uni = client
+				.preparedQuery("INSERT INTO CrossSellingRecommendations (LoyaltyCardId) VALUES (?)")
+				.executeBatch(batch)
+				.onItem().ignore().andContinueWithNull()
+				.replaceWith(Multi.createFrom().iterable(recommendations));
+
+		return uni.onItem().transformToMulti(u -> Multi.createFrom().items(recommendations.stream()));
 	}
 }
