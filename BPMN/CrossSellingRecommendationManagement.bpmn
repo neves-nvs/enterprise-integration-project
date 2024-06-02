@@ -3,17 +3,13 @@
   <bpmn:collaboration id="Collaboration_18adieo">
     <bpmn:participant id="Participant_1u7hs8b" name="System of interest" processRef="CrossSellingRecommendationProcess" />
   </bpmn:collaboration>
-  <bpmn:process id="CrossSellingRecommendationProcess" name="Cross Selling Recommendation Process" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_1" name="Once a week">
-      <bpmn:outgoing>Flow_1v34oun</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1w3oapg" />
-    </bpmn:startEvent>
+  <bpmn:process id="CrossSellingRecommendationProcess" name="Cross Selling Recommendation Process" isExecutable="true" camunda:historyTimeToLive="7">
     <bpmn:serviceTask id="Activity_1wb2it6" name="Get Purchases">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/Purchase</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-100-27-219-72.compute-1.amazonaws.com:8080/Purchase</camunda:inputParameter>
             <camunda:outputParameter name="PurchasesList">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
@@ -28,10 +24,12 @@
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/CrossSellingRecommendation/Generate</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-100-26-40-1.compute-1.amazonaws.com:8080/CrossSellingRecommendation/generate</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
-"purchases":"${PurchasesList}",
-}</camunda:inputParameter>
+"purchases":${PurchasesList}
+}
+
+</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
               <camunda:map>
@@ -68,18 +66,15 @@
     <bpmn:sequenceFlow id="Flow_1t69qkv" sourceRef="Activity_1wb2it6" targetRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" />
     <bpmn:sequenceFlow id="Flow_19kxxjd" sourceRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" targetRef="Activity_1czx17n" />
     <bpmn:sequenceFlow id="Flow_14lcr2n" sourceRef="Activity_1czx17n" targetRef="Event_1y1gxif" />
+    <bpmn:startEvent id="StartEvent_1" name="Once a week">
+      <bpmn:outgoing>Flow_1v34oun</bpmn:outgoing>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_CrossSellingRecommendation">
     <bpmndi:BPMNPlane id="BPMNPlane_CrossSellingRecommendation" bpmnElement="Collaboration_18adieo">
       <bpmndi:BPMNShape id="Participant_1u7hs8b_di" bpmnElement="Participant_1u7hs8b" isHorizontal="true">
         <omgdc:Bounds x="180" y="80" width="770" height="210" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0vey0ew_di" bpmnElement="StartEvent_1">
-        <omgdc:Bounds x="252" y="162" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="239" y="205" width="65" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0e66cie" bpmnElement="Activity_1wb2it6" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <omgdc:Bounds x="350" y="140" width="100" height="80" />
@@ -95,6 +90,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1y1gxif_di" bpmnElement="Event_1y1gxif">
         <omgdc:Bounds x="852" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0101l6j_di" bpmnElement="StartEvent_1">
+        <omgdc:Bounds x="252" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="239" y="205" width="65" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1v34oun_di" bpmnElement="Flow_1v34oun">
         <omgdi:waypoint x="288" y="180" />

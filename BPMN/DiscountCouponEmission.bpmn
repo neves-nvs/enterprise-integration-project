@@ -3,17 +3,13 @@
   <bpmn:collaboration id="Collaboration_08u1bgb">
     <bpmn:participant id="Participant_1eni3ip" name="System of interest" processRef="Process_0ip6oql" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_0ip6oql" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_1" name="Everyday at 15:00">
-      <bpmn:outgoing>Flow_1isotgd</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1w3oapg" />
-    </bpmn:startEvent>
+  <bpmn:process id="Process_0ip6oql" isExecutable="true" camunda:historyTimeToLive="7">
     <bpmn:serviceTask id="Activity_0u8ysv3" name="Get Customers">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/Customer</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-164-102-186.compute-1.amazonaws.com:8080/Customer</camunda:inputParameter>
             <camunda:outputParameter name="CustomersList">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
@@ -24,30 +20,24 @@
       <bpmn:incoming>Flow_1isotgd</bpmn:incoming>
       <bpmn:outgoing>Flow_1k963mn</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1wb2it6" name="Get Purchases">
-      <bpmn:extensionElements>
-        <camunda:connector>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/Purchase</camunda:inputParameter>
-            <camunda:outputParameter name="PurchasesList">
-              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
-            </camunda:outputParameter>
-          </camunda:inputOutput>
-          <camunda:connectorId>http-connector</camunda:connectorId>
-        </camunda:connector>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1k963mn</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ai7poi</bpmn:outgoing>
-    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0y2s6el">
+      <bpmn:incoming>Flow_120vco3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1isotgd" sourceRef="StartEvent_1" targetRef="Activity_0u8ysv3" />
+    <bpmn:sequenceFlow id="Flow_1k963mn" sourceRef="Activity_0u8ysv3" targetRef="Activity_1wb2it6" />
+    <bpmn:sequenceFlow id="Flow_120vco3" sourceRef="Activity_1czx17n" targetRef="Event_0y2s6el" />
+    <bpmn:startEvent id="StartEvent_1" name="Everyday at 15:00">
+      <bpmn:outgoing>Flow_1isotgd</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_161ov3m" sourceRef="Activity_1wb2it6" targetRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" />
     <bpmn:serviceTask id="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" name="Generate Coupons">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
-            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/DiscountCoupon/Generate</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-18-212-94-120.compute-1.amazonaws.com:8080/DiscountCoupon/generate</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
-"purchases":"${PurchasesList}",
-  "customers":"${CustomersList}"
+"purchases":${PurchasesList},
+"customers":${CustomersList}
 }</camunda:inputParameter>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="headers">
@@ -63,9 +53,10 @@
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0ai7poi</bpmn:incoming>
-      <bpmn:outgoing>Flow_19ggtw8</bpmn:outgoing>
+      <bpmn:incoming>Flow_161ov3m</bpmn:incoming>
+      <bpmn:outgoing>Flow_12htp8h</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_12htp8h" sourceRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" targetRef="Activity_1czx17n" />
     <bpmn:userTask id="Activity_1czx17n" name="Check DiscountCoupons" camunda:assignee="demo">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -75,17 +66,25 @@
           </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_19ggtw8</bpmn:incoming>
+      <bpmn:incoming>Flow_12htp8h</bpmn:incoming>
       <bpmn:outgoing>Flow_120vco3</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:endEvent id="Event_0y2s6el">
-      <bpmn:incoming>Flow_120vco3</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1isotgd" sourceRef="StartEvent_1" targetRef="Activity_0u8ysv3" />
-    <bpmn:sequenceFlow id="Flow_1k963mn" sourceRef="Activity_0u8ysv3" targetRef="Activity_1wb2it6" />
-    <bpmn:sequenceFlow id="Flow_0ai7poi" sourceRef="Activity_1wb2it6" targetRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" />
-    <bpmn:sequenceFlow id="Flow_19ggtw8" sourceRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" targetRef="Activity_1czx17n" />
-    <bpmn:sequenceFlow id="Flow_120vco3" sourceRef="Activity_1czx17n" targetRef="Event_0y2s6el" />
+    <bpmn:serviceTask id="Activity_1wb2it6" name="Get Purchases">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-100-27-219-72.compute-1.amazonaws.com:8080/Purchase</camunda:inputParameter>
+            <camunda:outputParameter name="PurchasesList">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k963mn</bpmn:incoming>
+      <bpmn:outgoing>Flow_161ov3m</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_08u1bgb">
@@ -93,30 +92,30 @@
         <dc:Bounds x="140" y="80" width="910" height="240" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0vey0ew_di" bpmnElement="StartEvent_1">
+      <bpmndi:BPMNShape id="BPMNShape_01elmg9" bpmnElement="Activity_0u8ysv3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="300" y="160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0y2s6el_di" bpmnElement="Event_0y2s6el">
+        <dc:Bounds x="952" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16s7pxn_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="212" y="182" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="186" y="225" width="89" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_01elmg9" bpmnElement="Activity_0u8ysv3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="300" y="160" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1t6tehd_di" bpmnElement="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="610" y="160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zkfuzz" bpmnElement="Activity_1czx17n">
+        <dc:Bounds x="780" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0e66cie" bpmnElement="Activity_1wb2it6" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="460" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1t6tehd_di" bpmnElement="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="630" y="160" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0zkfuzz" bpmnElement="Activity_1czx17n">
-        <dc:Bounds x="800" y="160" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0y2s6el_di" bpmnElement="Event_0y2s6el">
-        <dc:Bounds x="952" y="182" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1isotgd_di" bpmnElement="Flow_1isotgd">
         <di:waypoint x="248" y="200" />
@@ -126,17 +125,17 @@
         <di:waypoint x="400" y="200" />
         <di:waypoint x="460" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ai7poi_di" bpmnElement="Flow_0ai7poi">
-        <di:waypoint x="560" y="200" />
-        <di:waypoint x="630" y="200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_19ggtw8_di" bpmnElement="Flow_19ggtw8">
-        <di:waypoint x="730" y="200" />
-        <di:waypoint x="800" y="200" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_120vco3_di" bpmnElement="Flow_120vco3">
-        <di:waypoint x="900" y="200" />
+        <di:waypoint x="880" y="200" />
         <di:waypoint x="952" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_161ov3m_di" bpmnElement="Flow_161ov3m">
+        <di:waypoint x="560" y="200" />
+        <di:waypoint x="610" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12htp8h_di" bpmnElement="Flow_12htp8h">
+        <di:waypoint x="710" y="200" />
+        <di:waypoint x="780" y="200" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -3,19 +3,15 @@
   <bpmn:collaboration id="Collaboration_0rji936">
     <bpmn:participant id="Participant_16ucb60" name="System of interest" processRef="Process_1scvs35" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_1scvs35" isExecutable="true">
+  <bpmn:process id="Process_1scvs35" isExecutable="true" camunda:historyTimeToLive="7">
     <bpmn:sequenceFlow id="Flow_1bvt8ak" sourceRef="StartEvent_1" targetRef="Activity_1wb2it6" />
-    <bpmn:startEvent id="StartEvent_1" name="Every Week at Wednesday">
-      <bpmn:outgoing>Flow_1bvt8ak</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1qd340v" />
-    </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1qvudze" sourceRef="Activity_1wb2it6" targetRef="Activity_1czx17n" />
     <bpmn:serviceTask id="Activity_1wb2it6" name="Get SelledProducts Analytics">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">GET</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/SelledProduct/Analytics</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-196-230-200.compute-1.amazonaws.com:8080/SelledProduct/Analytics</camunda:inputParameter>
             <camunda:outputParameter name="Report">
               <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
             </camunda:outputParameter>
@@ -42,18 +38,15 @@
     <bpmn:endEvent id="Event_0xirrxc">
       <bpmn:incoming>Flow_140wgcy</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:startEvent id="StartEvent_1" name="Every Week at Wednesday">
+      <bpmn:outgoing>Flow_1bvt8ak</bpmn:outgoing>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0rji936">
       <bpmndi:BPMNShape id="Participant_16ucb60_di" bpmnElement="Participant_16ucb60" isHorizontal="true">
         <dc:Bounds x="129" y="79" width="621" height="250" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1txaqcf_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="212" y="182" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="194" y="225" width="72" height="27" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0e66cie" bpmnElement="Activity_1wb2it6" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="330" y="160" width="100" height="80" />
@@ -65,6 +58,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0xirrxc_di" bpmnElement="Event_0xirrxc">
         <dc:Bounds x="662" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nzvg0r_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="212" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="194" y="225" width="72" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1bvt8ak_di" bpmnElement="Flow_1bvt8ak">
         <di:waypoint x="248" y="200" />
