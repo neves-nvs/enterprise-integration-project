@@ -1,37 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1yt5uy4" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1yt5uy4" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
   <bpmn:collaboration id="Collaboration_0rji936">
-    <bpmn:participant id="Participant_16ucb60" processRef="Process_1scvs35" />
+    <bpmn:participant id="Participant_16ucb60" name="System of interest" processRef="Process_1scvs35" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1scvs35" isExecutable="true">
-    <bpmn:sequenceFlow id="Flow_0zo7jmc" sourceRef="Activity_0baqllp" targetRef="Event_0xirrxc" />
-    <bpmn:sequenceFlow id="Flow_1b8h587" sourceRef="Activity_1owsmei" targetRef="Activity_0baqllp" />
-    <bpmn:sequenceFlow id="Flow_0rl7jg3" sourceRef="Activity_053kic7" targetRef="Activity_1owsmei" />
-    <bpmn:sequenceFlow id="Flow_1bvt8ak" sourceRef="StartEvent_1" targetRef="Activity_053kic7" />
-    <bpmn:endEvent id="Event_0xirrxc">
-      <bpmn:incoming>Flow_0zo7jmc</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:userTask id="Activity_0baqllp" name="Review Report">
-      <bpmn:incoming>Flow_1b8h587</bpmn:incoming>
-      <bpmn:outgoing>Flow_0zo7jmc</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_1owsmei" name="Generate Analytics Report">
-      <bpmn:incoming>Flow_0rl7jg3</bpmn:incoming>
-      <bpmn:outgoing>Flow_1b8h587</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_053kic7" name="Request Selled Product Data">
-      <bpmn:incoming>Flow_1bvt8ak</bpmn:incoming>
-      <bpmn:outgoing>Flow_0rl7jg3</bpmn:outgoing>
-    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1bvt8ak" sourceRef="StartEvent_1" targetRef="Activity_1wb2it6" />
     <bpmn:startEvent id="StartEvent_1" name="Every Week at Wednesday">
       <bpmn:outgoing>Flow_1bvt8ak</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1qd340v" />
     </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1qvudze" sourceRef="Activity_1wb2it6" targetRef="Activity_1czx17n" />
+    <bpmn:serviceTask id="Activity_1wb2it6" name="Get SelledProducts Analytics">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/SelledProduct/Analytics</camunda:inputParameter>
+            <camunda:outputParameter name="Report">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1bvt8ak</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qvudze</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_1czx17n" name="Review report" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Report" label="The generated report is" type="string">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1qvudze</bpmn:incoming>
+      <bpmn:outgoing>Flow_140wgcy</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_140wgcy" sourceRef="Activity_1czx17n" targetRef="Event_0xirrxc" />
+    <bpmn:endEvent id="Event_0xirrxc">
+      <bpmn:incoming>Flow_140wgcy</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0rji936">
       <bpmndi:BPMNShape id="Participant_16ucb60_di" bpmnElement="Participant_16ucb60" isHorizontal="true">
-        <dc:Bounds x="129" y="79" width="821" height="250" />
+        <dc:Bounds x="129" y="79" width="621" height="250" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1txaqcf_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="212" y="182" width="36" height="36" />
@@ -39,36 +55,28 @@
           <dc:Bounds x="194" y="225" width="72" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_06t3zo7_di" bpmnElement="Activity_053kic7" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="300" y="160" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_0e66cie" bpmnElement="Activity_1wb2it6" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="330" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0jla72p_di" bpmnElement="Activity_1owsmei" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="460" y="160" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_071wv81_di" bpmnElement="Activity_0baqllp">
-        <dc:Bounds x="620" y="160" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_0zkfuzz" bpmnElement="Activity_1czx17n">
+        <dc:Bounds x="490" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0xirrxc_di" bpmnElement="Event_0xirrxc">
-        <dc:Bounds x="782" y="182" width="36" height="36" />
+        <dc:Bounds x="662" y="182" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1bvt8ak_di" bpmnElement="Flow_1bvt8ak">
         <di:waypoint x="248" y="200" />
-        <di:waypoint x="300" y="200" />
+        <di:waypoint x="330" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0rl7jg3_di" bpmnElement="Flow_0rl7jg3">
-        <di:waypoint x="400" y="200" />
-        <di:waypoint x="460" y="200" />
+      <bpmndi:BPMNEdge id="Flow_1qvudze_di" bpmnElement="Flow_1qvudze">
+        <di:waypoint x="430" y="200" />
+        <di:waypoint x="490" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1b8h587_di" bpmnElement="Flow_1b8h587">
-        <di:waypoint x="560" y="200" />
-        <di:waypoint x="620" y="200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0zo7jmc_di" bpmnElement="Flow_0zo7jmc">
-        <di:waypoint x="720" y="200" />
-        <di:waypoint x="782" y="200" />
+      <bpmndi:BPMNEdge id="Flow_140wgcy_di" bpmnElement="Flow_140wgcy">
+        <di:waypoint x="590" y="200" />
+        <di:waypoint x="662" y="200" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

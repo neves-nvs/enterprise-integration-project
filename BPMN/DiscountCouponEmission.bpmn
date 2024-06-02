@@ -1,111 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_04n0wc6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_04n0wc6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
   <bpmn:collaboration id="Collaboration_08u1bgb">
-    <bpmn:participant id="Participant_1eni3ip" processRef="Process_0ip6oql" />
+    <bpmn:participant id="Participant_1eni3ip" name="System of interest" processRef="Process_0ip6oql" />
   </bpmn:collaboration>
   <bpmn:process id="Process_0ip6oql" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="Everyday at 15:00">
       <bpmn:outgoing>Flow_1isotgd</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1w3oapg" />
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Activity_1l8sd8b" name="Get Discount Coupons">
+    <bpmn:serviceTask id="Activity_0u8ysv3" name="Get Customers">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/Customer</camunda:inputParameter>
+            <camunda:outputParameter name="CustomersList">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_1isotgd</bpmn:incoming>
-      <bpmn:outgoing>Flow_07b7bex</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1k963mn</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1ornpgh" name="Get Purchases">
-      <bpmn:incoming>Flow_07b7bex</bpmn:incoming>
-      <bpmn:outgoing>Flow_12o79ry</bpmn:outgoing>
+    <bpmn:serviceTask id="Activity_1wb2it6" name="Get Purchases">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/Purchase</camunda:inputParameter>
+            <camunda:outputParameter name="PurchasesList">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k963mn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ai7poi</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0zqm2zs" name="Generates Coupons">
-      <bpmn:incoming>Flow_12o79ry</bpmn:incoming>
-      <bpmn:outgoing>Flow_13fhkfn</bpmn:outgoing>
+    <bpmn:serviceTask id="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" name="Generate Coupons">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://ec2-54-167-70-113.compute-1.amazonaws.com:8080/DiscountCoupon/Generate</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+"purchases":"${PurchasesList}",
+  "customers":"${CustomersList}"
+}</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="accept">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="DiscountCouponsList">
+              <camunda:script scriptFormat="JavaScript">S(connector.getVariable("response"));</camunda:script>
+            </camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ai7poi</bpmn:incoming>
+      <bpmn:outgoing>Flow_19ggtw8</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1grisom" name="Upload Generated Coupons">
-      <bpmn:incoming>Flow_13fhkfn</bpmn:incoming>
-      <bpmn:outgoing>Flow_0y22tmk</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_029ax61" name="Get Customers associated with Loyalty Cards">
-      <bpmn:incoming>Flow_0y22tmk</bpmn:incoming>
-      <bpmn:outgoing>Flow_0n6vcde</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0k2me38" name="Notify Customers">
-      <bpmn:incoming>Flow_0n6vcde</bpmn:incoming>
-      <bpmn:outgoing>Flow_0cin0o8</bpmn:outgoing>
-    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_1czx17n" name="Check DiscountCoupons" camunda:assignee="demo">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="DiscountCouponsList" label="The generated discountcoupons are" type="string">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19ggtw8</bpmn:incoming>
+      <bpmn:outgoing>Flow_120vco3</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:endEvent id="Event_0y2s6el">
-      <bpmn:incoming>Flow_0cin0o8</bpmn:incoming>
+      <bpmn:incoming>Flow_120vco3</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1isotgd" sourceRef="StartEvent_1" targetRef="Activity_1l8sd8b" />
-    <bpmn:sequenceFlow id="Flow_07b7bex" sourceRef="Activity_1l8sd8b" targetRef="Activity_1ornpgh" />
-    <bpmn:sequenceFlow id="Flow_12o79ry" sourceRef="Activity_1ornpgh" targetRef="Activity_0zqm2zs" />
-    <bpmn:sequenceFlow id="Flow_13fhkfn" sourceRef="Activity_0zqm2zs" targetRef="Activity_1grisom" />
-    <bpmn:sequenceFlow id="Flow_0y22tmk" sourceRef="Activity_1grisom" targetRef="Activity_029ax61" />
-    <bpmn:sequenceFlow id="Flow_0n6vcde" sourceRef="Activity_029ax61" targetRef="Activity_0k2me38" />
-    <bpmn:sequenceFlow id="Flow_0cin0o8" sourceRef="Activity_0k2me38" targetRef="Event_0y2s6el" />
+    <bpmn:sequenceFlow id="Flow_1isotgd" sourceRef="StartEvent_1" targetRef="Activity_0u8ysv3" />
+    <bpmn:sequenceFlow id="Flow_1k963mn" sourceRef="Activity_0u8ysv3" targetRef="Activity_1wb2it6" />
+    <bpmn:sequenceFlow id="Flow_0ai7poi" sourceRef="Activity_1wb2it6" targetRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" />
+    <bpmn:sequenceFlow id="Flow_19ggtw8" sourceRef="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" targetRef="Activity_1czx17n" />
+    <bpmn:sequenceFlow id="Flow_120vco3" sourceRef="Activity_1czx17n" targetRef="Event_0y2s6el" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_08u1bgb">
       <bpmndi:BPMNShape id="Participant_1eni3ip_di" bpmnElement="Participant_1eni3ip" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="1240" height="390" />
+        <dc:Bounds x="140" y="80" width="910" height="240" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0vey0ew_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="232" y="282" width="36" height="36" />
+        <dc:Bounds x="212" y="182" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="206" y="325" width="89" height="14" />
+          <dc:Bounds x="186" y="225" width="89" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0utg5e5_di" bpmnElement="Activity_1l8sd8b" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="320" y="260" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0dfdwl9_di" bpmnElement="Activity_1ornpgh" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="480" y="260" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_01elmg9" bpmnElement="Activity_0u8ysv3" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="300" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1k0i834_di" bpmnElement="Activity_0zqm2zs" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="640" y="260" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_0e66cie" bpmnElement="Activity_1wb2it6" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="460" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_009pkk9_di" bpmnElement="Activity_1grisom" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="800" y="260" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0lojwee_di" bpmnElement="Activity_029ax61" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="960" y="260" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_1t6tehd_di" bpmnElement="Activity_8d375442-d52a-4e2f-bf77-6b72b28b8fe2" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="630" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0s0lojj_di" bpmnElement="Activity_0k2me38" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1130" y="260" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_0zkfuzz" bpmnElement="Activity_1czx17n">
+        <dc:Bounds x="800" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0y2s6el_di" bpmnElement="Event_0y2s6el">
-        <dc:Bounds x="1292" y="282" width="36" height="36" />
+        <dc:Bounds x="952" y="182" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_13fhkfn_di" bpmnElement="Flow_13fhkfn">
-        <di:waypoint x="740" y="300" />
-        <di:waypoint x="800" y="300" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cin0o8_di" bpmnElement="Flow_0cin0o8">
-        <di:waypoint x="1230" y="300" />
-        <di:waypoint x="1292" y="300" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1isotgd_di" bpmnElement="Flow_1isotgd">
-        <di:waypoint x="268" y="300" />
-        <di:waypoint x="320" y="300" />
+        <di:waypoint x="248" y="200" />
+        <di:waypoint x="300" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_07b7bex_di" bpmnElement="Flow_07b7bex">
-        <di:waypoint x="420" y="300" />
-        <di:waypoint x="480" y="300" />
+      <bpmndi:BPMNEdge id="Flow_1k963mn_di" bpmnElement="Flow_1k963mn">
+        <di:waypoint x="400" y="200" />
+        <di:waypoint x="460" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_12o79ry_di" bpmnElement="Flow_12o79ry">
-        <di:waypoint x="580" y="300" />
-        <di:waypoint x="640" y="300" />
+      <bpmndi:BPMNEdge id="Flow_0ai7poi_di" bpmnElement="Flow_0ai7poi">
+        <di:waypoint x="560" y="200" />
+        <di:waypoint x="630" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0y22tmk_di" bpmnElement="Flow_0y22tmk">
-        <di:waypoint x="900" y="300" />
-        <di:waypoint x="960" y="300" />
+      <bpmndi:BPMNEdge id="Flow_19ggtw8_di" bpmnElement="Flow_19ggtw8">
+        <di:waypoint x="730" y="200" />
+        <di:waypoint x="800" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0n6vcde_di" bpmnElement="Flow_0n6vcde">
-        <di:waypoint x="1060" y="300" />
-        <di:waypoint x="1130" y="300" />
+      <bpmndi:BPMNEdge id="Flow_120vco3_di" bpmnElement="Flow_120vco3">
+        <di:waypoint x="900" y="200" />
+        <di:waypoint x="952" y="200" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
