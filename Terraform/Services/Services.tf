@@ -48,16 +48,14 @@ output "security_group_id" {
 }
 
 module "customer-shop-loyaltycard" {
-  source = "./Customer-Shop-LoyaltyCard"
-  #   security_group_name = var.security_group_name
+  source         = "./Customer-Shop-LoyaltyCard"
   rds_dns        = var.rds_dns
   dockerhub_user = var.dockerhub_user
   key_name       = var.key_name
 }
 
 module "purchase" {
-  source = "./Purchase"
-  #   security_group_name = var.security_group_name
+  source           = "./Purchase"
   rds_dns          = var.rds_dns
   dockerhub_user   = var.dockerhub_user
   kafka_broker_url = var.kafka_broker_url
@@ -65,8 +63,7 @@ module "purchase" {
 }
 
 module "discount-coupon" {
-  source = "./DiscountCoupon"
-  #   security_group_name = var.security_group_name
+  source           = "./DiscountCoupon"
   rds_dns          = var.rds_dns
   dockerhub_user   = var.dockerhub_user
   kafka_broker_url = var.kafka_broker_url
@@ -74,8 +71,7 @@ module "discount-coupon" {
 }
 
 module "cross-selling-recommendation" {
-  source = "./CrossSellingRecommendation"
-  #   security_group_name = var.security_group_name
+  source           = "./CrossSellingRecommendation"
   rds_dns          = var.rds_dns
   dockerhub_user   = var.dockerhub_user
   kafka_broker_url = var.kafka_broker_url
@@ -83,8 +79,7 @@ module "cross-selling-recommendation" {
 }
 
 module "selled-product" {
-  source = "./SelledProduct"
-  #   security_group_name = var.security_group_name
+  source           = "./SelledProduct"
   rds_dns          = var.rds_dns
   dockerhub_user   = var.dockerhub_user
   kafka_broker_url = var.kafka_broker_url

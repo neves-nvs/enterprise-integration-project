@@ -74,12 +74,20 @@ output "customer_shop_loyaltycard_public_dns" {
   value = module.services.customer-shop-loyaltycard-public_dns
 }
 
+output "purchase_public_dns" {
+  value = module.services.purchase-public_dns
+}
+
 output "discountcoupon_public_dns" {
   value = module.services.discountcoupon-public_dns
 }
 
-output "purchase_public_dns" {
-  value = module.services.purchase-public_dns
+output "crosssellingrecommendation_public_dns" {
+  value = module.services.cross-selling-recommendation-public_dns
+}
+
+output "selledproduct_public_dns" {
+  value = module.services.selled-product-public_dns
 }
 
 /* -------------------------------------------------------------------------- */
