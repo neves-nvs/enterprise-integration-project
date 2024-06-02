@@ -4,6 +4,7 @@ import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -97,7 +98,8 @@ public class CrossSellingRecommendationResource {
 	@POST
 	@Path("/generate")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Multi<CrossSellingRecommendation> generate(JsonArray purchases) {
+	public Multi<CrossSellingRecommendation> generate(JsonObject purchasesInput) {
+		JsonArray purchases = purchasesInput.getJsonArray("purchases");
 
 		return CrossSellingRecommendation.generate(client, purchases);
 	}
